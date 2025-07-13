@@ -1,0 +1,42 @@
+{
+  "name": "finance-backend",
+  "version": "1.0.0",
+  "description": "Backend para aplicación web financiera",
+  "main": "index.js",
+  "type": "module",
+  "imports": {
+    "#*": "./src/*",
+    "#test/*": "./test/*"
+  },
+  "scripts": {
+    "dev": "node --watch --env-file=.env server.js",
+    "test": "node --test",
+    "coverage": "c8 node --test"
+  },
+  "c8": {
+    "reporter": ["text", "html"],
+    "exclude": [
+      "test",
+      "node_modules",
+      "src/routes/**",
+      "src/config/**",
+      "server.js"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "branches": 0,
+    "functions": 0,
+    "lines": 0,
+    "statements": 0
+  },
+  "author": "Juan Manuel Henao",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.16.3",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "c8": "^10.1.3"
+  }
+}
