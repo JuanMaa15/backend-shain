@@ -4,8 +4,38 @@ import userService from "#services/user.service.js";
 
 const authController = {
 
-  login: async(req, res) => {
-    res.status(200).send("Logueando");
+  login: async(req, res, next) => {
+    
+    const {username, password} = req.body;
+
+    try {
+      
+      const user = await userService.login({username, password});
+
+      const token = await createAccessToken({id: user._id, username: user.username});
+
+      configureTokenCookie(res, token);
+
+      return res.status(200).json({
+        status: 'success',
+        data: token
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  logout: async(req, res) => {
+    res.cookie('tolen', '', {
+      expires: new Date(0)
+    });
+
+    return res.status(200).json({
+      status:'success',
+      message: 'Sesión cerrada correctamente.'
+    });
   },
 
   register: async(req, res, next) => {

@@ -7,10 +7,15 @@ const userService = {
 
   registerUser: async(data) => {
 
-    //Validar si el correo ya existe
-    const user = await userService.getUserByEmail(data.email); 
+    //Validar si el nombre de usuario ya existe
+    const userByUsername = await userService.getUserByUsername(data.username);
+    
+    if(userByUsername) throw new AppError('error', 'El nombre de usuario ya fue registrado', 400);
 
-    if (user) throw new AppError('error', 'El correo ya fue registrado', 400);
+    //Validar si el correo ya existe
+    const userByEmail = await userService.getUserByEmail(data.email); 
+
+    if (userByEmail) throw new AppError('error', 'El correo ya fue registrado', 400);
 
     const {password, confirmPassword, ...dataUser} = data;
 
@@ -25,12 +30,29 @@ const userService = {
 
   },
 
+  login: async({username, password}) => {
+
+    const user = await userService.getUserByUsername(username);
+
+    if(!user) throw new AppError('error', 'Nombre de usuario o contraseña incorrectos.', 400);
+
+    const isValid = await userService.comparePassword(password, user.password);
+
+    if (!isValid) throw new AppError('error', 'Nombre de usuario o contraseña incorrectos.', 400);
+
+    return user;
+
+  },
 
   createUser: async(data) => await User.create(data),
 
   getUserByEmail: async(email) => await User.findOne({email}),
 
-  hashedPassword: async(password) => await bcrypt.hash(password, parseInt(SALT_ROUNDS, 10))
+  getUserByUsername: async(username) => await User.findOne({username}),
+
+  hashedPassword: async(password) => await bcrypt.hash(password, parseInt(SALT_ROUNDS, 10)),
+
+  comparePassword: async(password, hashPassword) => await bcrypt.compare(password, hashPassword),
 
 }
 

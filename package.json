@@ -22,6 +22,7 @@
     ],
     "exclude": [
       "test",
+      "coverage",
       "node_modules",
       "src/routes/**",
       "src/config/**",

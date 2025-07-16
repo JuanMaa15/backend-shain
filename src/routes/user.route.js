@@ -4,7 +4,8 @@ import { Router } from 'express'
 
 const router = Router();
 
-router.get('/login', loginLimiter, authController.login);
+router.post('/login', loginLimiter, authController.login);
 router.post('/register', loginLimiter, authController.register);
+router.post('/logout', authController.logout);
 
 export default router;
