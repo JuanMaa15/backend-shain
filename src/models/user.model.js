@@ -1,6 +1,6 @@
-import { Schema, Model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-const userSchema = Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -29,6 +29,11 @@ const userSchema = Schema(
     },
     phone: {
       type:String
+    },
+    status: {
+      type: String,
+      required: true,
+      default: 'activo'
     }
   },
   {
@@ -37,6 +42,6 @@ const userSchema = Schema(
 
 );
 
-const User = Model('User', userSchema, 'users');
+const User = model('User', userSchema, 'users');
 
 export default User;
