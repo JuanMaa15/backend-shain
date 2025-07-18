@@ -12,7 +12,7 @@ const authController = {
       
       const user = await userService.login({username, password});
 
-      const token = await createAccessToken({id: user._id, username: user.username});
+      const token = await createAccessToken({id: user.id, username: user.username});
 
       configureTokenCookie(res, token);
 

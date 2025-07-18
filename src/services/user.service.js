@@ -2,6 +2,7 @@ import { SALT_ROUNDS } from '#config/env.config.js';
 import User from '#models/user.model.js';
 import { AppError } from '#utils/appError.js';
 import bcrypt from 'bcrypt'
+import { differenceInDays } from 'date-fns';
 
 const userService = {
 
@@ -40,7 +41,22 @@ const userService = {
 
     if (!isValid) throw new AppError('error', 'Nombre de usuario o contraseña incorrectos.', 400);
 
+    //Validar si el periodo de prueba ya expirado
+    const hasTrialExpired = userService.validateTrialPeriod(new Date(user.createdAt), new Date() );
+
+    if (hasTrialExpired) throw new AppError('error', 'Tu periodo de prueba ha expirado. Por favor, actualiza tu plan.', 403);
+
     return user;
+
+  },
+
+  validateTrialPeriod: (dateCreate, dateNow) => {
+
+    const daysPassed = differenceInDays(dateNow, dateCreate);
+
+    if ( daysPassed > 7) return true;
+
+    return false;
 
   },
 

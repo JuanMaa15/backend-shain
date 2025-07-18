@@ -1,5 +1,5 @@
 import { cors } from '#middlewares/cors.middleware.js';
-import { errorHandler } from '#middlewares/errorHandler.js';
+import { errorHandler } from '#middlewares/errorHandler.middleware.js';
 import { helmetConfig } from '#middlewares/helmet.middleware.js';
 import { generalLimiter } from '#middlewares/rateLimiter.middleware.js';
 import router from '#routes/index.js';
@@ -7,6 +7,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 
 const app = express();
+
+app.set("trust proxy", 1);
 
 //Cabeceras de seguridad
 app.use(helmetConfig);

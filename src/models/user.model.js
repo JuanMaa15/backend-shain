@@ -10,7 +10,7 @@ const userSchema = new Schema(
       type: String,
       required: true
     },
-    rol: {
+    role: {
       type: String,
       required: true
     },
@@ -37,7 +37,14 @@ const userSchema = new Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+      virtuals: true,      
+      transform: function (doc, ret) {
+        ret.id = ret._id.toString(); 
+        delete ret._id;              
+      }
+    }
   }
 
 );
