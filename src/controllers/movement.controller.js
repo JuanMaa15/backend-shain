@@ -16,9 +16,87 @@ const movementController = {
           type: newMovement.type,
           description: newMovement.description,
           value: newMovement.value,
-          date: ""
+          date: newMovement.date
         }
       });
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  updateMovement: async(req, res, next) => {
+
+    const {id} = req.params;
+    const data = req.body;
+
+    try {
+      const updateMovement = await movementService.updateMovement(id, data);
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: updateMovement
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  deleteMovement: async(req, res, next) => {
+   
+    const {id} = req.params;
+
+    try {
+      
+      await movementService.deleteMovement(id);
+      
+      return res.status(204);
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  getMovementsByfilters: async(req, res, next) => {
+
+    const {type} = req.query;
+    const user = req.user.id;
+
+    try {
+
+      const movements = await movementService.getMovementsByTypeAndUser(type, user);
+
+      res.status(200).json({
+        status: 'sucess',
+        code: 200,
+        data: movements
+
+      });
+    } catch (error) {
+      console.log(error.message);
+      next(error);
+    }   
+
+  },
+
+  getMovement: async(req, res, next) => {
+
+    const {id} = req.params;
+
+    try {
+      
+      const movement = await movementService.getOneMovement(id);
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: movement
+      });
+
     } catch (error) {
       next(error);
     }

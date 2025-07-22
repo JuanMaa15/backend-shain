@@ -27,10 +27,37 @@ export const authRequired = async(req, res, next) => {
       })
 
     return res.status(500).json({
-      status: 'Unauthorized',
-      code: 401,
-      message: 'El token ha expirado'
-    })  
+      status: 'error',
+      code: 500,
+      message: 'Ha ocurrido un error inesperado en el servidor. Por favor, intente nuevamente más tarde.'
+    }); 
 
   }
+}
+
+export const authorizeAccess = ({model}) => async(req, res, next) => {
+
+  const userId = req.user.id;
+  const registerId = req.params.id;
+
+  try {
+    const register = await model.findById(registerId);
+  
+    if (userId === register.user) return next();
+      
+    return res.status(401).json({
+      status: 'Unauthorized',
+      code: 401,
+      message: 'Autorización denegada'
+    });
+    
+  } catch (error) {
+    
+    return res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Ha ocurrido un error inesperado en el servidor. Por favor, intente nuevamente más tarde.'
+    }); 
+  }
+
 }

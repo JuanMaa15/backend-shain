@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import {Schema, model} from 'mongoose';
 
 const movementSchema = new Schema(
@@ -33,6 +34,7 @@ const movementSchema = new Schema(
       virtuals: true,      
       transform: function (doc, ret) {
         ret.id = ret._id.toString(); 
+        ret.date = format(ret.date, "yyyy-MM-dd");
         delete ret._id;              
       }
     }

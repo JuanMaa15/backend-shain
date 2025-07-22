@@ -18,7 +18,10 @@ const authController = {
 
       return res.status(200).json({
         status: 'success',
-        data: token
+        data: {
+          id: user.id,
+          username: user.username
+        }
       });
 
     } catch (error) {
