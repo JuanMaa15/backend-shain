@@ -38,12 +38,11 @@ export const authRequired = async(req, res, next) => {
 export const authorizeAccess = ({model}) => async(req, res, next) => {
 
   const userId = req.user.id;
-  const registerId = req.params.id;
-
+  const registerId = req.params.id; 
+  
   try {
     const register = await model.findById(registerId);
-  
-    if (userId === register.user) return next();
+    if (userId === register?.user?.toString() || userId === register?._id.toString()) return next();
       
     return res.status(401).json({
       status: 'Unauthorized',
@@ -52,7 +51,7 @@ export const authorizeAccess = ({model}) => async(req, res, next) => {
     });
     
   } catch (error) {
-    
+    console.log(error.message);
     return res.status(500).json({
       status: 'error',
       code: 500,

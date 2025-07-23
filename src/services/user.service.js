@@ -62,6 +62,22 @@ const userService = {
 
   createUser: async(data) => await User.create(data),
 
+  updateUser: async(id, data) => await User.findOneAndUpdate(
+    { _id: id },
+    { $set: data },
+    { new: true }
+  ),
+
+  getOneUser: async(id) => {
+
+    const user = await User.findById(id, { password: 0 })
+
+    if (!user) throw new AppError('error', 'El usuario no existe en el sistema', 404);
+
+    return user;
+
+  },
+
   getUserByEmail: async(email) => await User.findOne({email}),
 
   getUserByUsername: async(username) => await User.findOne({username}),
