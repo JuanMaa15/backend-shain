@@ -60,6 +60,35 @@ const userSchema = {
     }).nonempty({
       message: 'El campo no puede estar vacío.'
     })
+  }),
+
+  updateProfile: z.object({
+    name: z.string({
+      required_error: 'Este campo es obligatorio *'
+    }).nonempty({
+      message: 'El campo no puede estar vacío.'
+    }),
+
+    lastName: z.string({
+      required_error: 'Este campo es obligatorio *'
+    }).nonempty({
+      message: 'El campo no puede estar vacío.'
+    }),
+
+    username: z.string({
+      required_error: 'Este campo es obligatorio *'
+    }).nonempty({
+      message: 'El campo no puede estar vacío.'
+    }),
+
+    email: z.string({
+      required_error: 'Este campo es obligatorio'
+    }).nonempty({
+      message: 'El campo no puede estar vacío'
+    }).email({
+      message: 'Email no valido'
+    }),
+    
   })
 
 }
