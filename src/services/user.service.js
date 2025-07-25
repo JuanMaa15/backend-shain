@@ -54,7 +54,7 @@ const userService = {
 
     const daysPassed = differenceInDays(dateNow, dateCreate);
 
-    if ( daysPassed > 7) return true;
+    if ( daysPassed > 14) return true;
 
     return false;
 
