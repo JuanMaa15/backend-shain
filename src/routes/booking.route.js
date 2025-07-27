@@ -6,5 +6,6 @@ import { Router } from "express";
 const router = Router();
 
 router.post('/', validateSchema(bookingSchema.create), bookingController.createBooking);
+router.get('/', bookingController.getBookingsByFilters);
 
 export default router;

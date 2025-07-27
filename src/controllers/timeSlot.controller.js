@@ -6,10 +6,11 @@ const timeSlotController = {
   getAvailablesHours: async(req, res, next) => {
 
     const {date} = req.query;
+    const user = req.user.id;
 
     try {
       
-      const availablesHours = await timeSlotService.getAvailablesHours(date);
+      const availablesHours = await timeSlotService.getAvailablesHours({date, user});
 
       return res.status(200).json({
         status: 'success',

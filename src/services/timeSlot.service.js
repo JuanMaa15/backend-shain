@@ -7,9 +7,9 @@ const timeSlotService = {
 
   getActivesHours: async() => await TimeSlot.find({isActive: true}),
 
-  getAvailablesHours: async(date) => {
+  getAvailablesHours: async({date, user}) => {
 
-    const bookings = await bookingService.getBookingsByDate( new Date(date) );
+    const bookings = await bookingService.getBookingsByDateAndUser( new Date(date), user );
 
     const activesHours = await timeSlotService.getActivesHours();
 
