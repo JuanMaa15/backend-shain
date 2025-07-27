@@ -1,5 +1,4 @@
 import TimeSlot from "#models/timeSlot.model.js";
-import { parseISO } from "date-fns";
 import bookingService from "./booking.service.js";
 
 const timeSlotService = {
@@ -10,21 +9,18 @@ const timeSlotService = {
 
   getAvailablesHours: async(date) => {
 
-    const formattedDate = parseISO(date);
-
-    const bookings = await bookingService.getBookingsByDate(formattedDate);
+    const bookings = await bookingService.getBookingsByDate( new Date(date) );
 
     const activesHours = await timeSlotService.getActivesHours();
 
     // Creamos un Set con los IDs de las horas ya reservadas
-    const reservedSet = new Set( bookings.map(b => b.timeSlot) );
+    const reservedSet = new Set( bookings.map(b => b.timeSlot.toString()) );
 
     // Filtramos las horas activas que no están en el Set
     //const availablesHours = activesHours.filter( hour => !reservedSet.has(hour._id) );
-
     const hours = activesHours.map( hour => ({
       hour: hour.hour,
-      available: !reservedSet.has(hour.id)
+      available: !reservedSet.has(hour.id.toString())
     }));
 
     return hours;

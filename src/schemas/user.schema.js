@@ -6,45 +6,45 @@ const userSchema = {
     name: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
     
     lastName: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
     
     role: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     username: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     email: z.string({
       required_error: 'Este campo es obligatorio'
     }).nonempty({
-      message: 'El campo no puede estar vacío'
+      error: 'El campo no puede estar vacío'
     }).email({
-      message: 'Email no valido'
+      error: 'Email no valido'
     }),
 
     password: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     confirmPassword: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     })
   }),
 
@@ -52,13 +52,13 @@ const userSchema = {
     username: z.string({
       required_error: "Este campo es obligatorio *"
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     password: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     })
   }),
 
@@ -66,27 +66,27 @@ const userSchema = {
     name: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     lastName: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     username: z.string({
       required_error: 'Este campo es obligatorio *'
     }).nonempty({
-      message: 'El campo no puede estar vacío.'
+      error: 'El campo no puede estar vacío.'
     }),
 
     email: z.string({
       required_error: 'Este campo es obligatorio'
     }).nonempty({
-      message: 'El campo no puede estar vacío'
+      error: 'El campo no puede estar vacío'
     }).email({
-      message: 'Email no valido'
+      error: 'Email no valido'
     }),
     
   })
