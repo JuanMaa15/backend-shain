@@ -40,7 +40,7 @@ const bookingService = {
 
   getBookingsByUser: async(user) => await Booking.find({user}),
 
-  getBookingsByDateAndUser: async(date) => await Booking.find({date, user}),
+  getBookingsByDateAndUser: async(date, user) => await Booking.find({date, user}),
 
   getBookingByDateAndTimeSlot: async(date, timeSlot) => await Booking.findOne({date, timeSlot}),
 

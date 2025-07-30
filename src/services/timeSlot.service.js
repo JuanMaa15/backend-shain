@@ -19,6 +19,7 @@ const timeSlotService = {
     // Filtramos las horas activas que no están en el Set
     //const availablesHours = activesHours.filter( hour => !reservedSet.has(hour._id) );
     const hours = activesHours.map( hour => ({
+      id: hour._id,
       hour: hour.hour,
       available: !reservedSet.has(hour.id.toString())
     }));

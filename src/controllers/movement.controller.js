@@ -101,6 +101,27 @@ const movementController = {
       next(error);
     }
 
+  },
+
+  getSummary: async(req, res, next) => {
+
+    const {date} = req.query;
+    const user = req.user.id;
+    
+    try {
+      
+      const summary = await movementService.getSummaryAndStatistics({date, user});
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: summary
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
   }
 
 }

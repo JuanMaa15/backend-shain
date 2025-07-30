@@ -5,14 +5,18 @@ const movementSchema = new Schema(
   {
     type: {
       type: String,
-      required: true
+      enum: ['ingreso', 'egreso'],
+      required: true,
+      lowercase: true
     },
     frecuencyType: {
       type: String,
-      required:true
+      required:true,
+      enum: ['nuevo', 'recurrente'],
+      lowercase: true
     },
     value: {
-      type: String,
+      type: Number,
       required: true,
     },
     description: {
