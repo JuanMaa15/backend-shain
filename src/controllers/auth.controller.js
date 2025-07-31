@@ -90,7 +90,7 @@ const authController = {
 
       const token = createSecureToken();
       const newResetToken = await ResetToken.create({user: user._id, token});
-
+      
 
       return res.status.json({
         status: 'success',
