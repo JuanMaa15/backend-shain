@@ -77,7 +77,6 @@ const movementController = {
 
       });
     } catch (error) {
-      console.log(error.message);
       next(error);
     }   
 
@@ -116,6 +115,27 @@ const movementController = {
         status: 'success',
         code: 200,
         data: summary
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  getMovementsLastDays: async(req, res, next) => {
+
+    const {days} = req.query;
+    const user = req.user.id;
+
+    try {
+      
+      const movements = await movementService.getlastMovementsByDateAndUser({days, user});
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: movements
       });
 
     } catch (error) {

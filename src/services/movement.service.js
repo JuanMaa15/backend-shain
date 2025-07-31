@@ -1,7 +1,8 @@
 import { movementTypes } from "#config/constants.config.js";
 import Movement from "#models/movement.model.js";
-import { getMonthRange } from "#utils/dateTime.js";
+import { getLastDays, getMonthRange } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
+import { format } from "date-fns";
 
 const movementService = {
 
@@ -48,17 +49,20 @@ const movementService = {
   getSummaryAndStatistics: async({date, user}) => {
 
     const totalIncomesDay = await movementService.getTotalTransactionsDay({date: new Date(date), user, type: movementTypes.INCOME});
-    console.log(`Egresos por dia: ${totalIncomesDay.total}`);
 
     const totalTransactionsMonth = await movementService.getTotalTransactionsMonth(user);
-    console.log('Egresos e ingresos totales de este mes');
-    console.log(totalTransactionsMonth);
+    
+    const dataSummary = {
+      incomesDay: totalIncomesDay?.total || 0,
+      incomesMonth: totalTransactionsMonth?.ingresoMes|| 0,
+      expensesMonth: totalTransactionsMonth?.egresoMes || 0,
+    }
 
-    return true;
+    return dataSummary;
   },
 
   getTotalTransactionsDay: async({date, user, type}) => {
-    console.log(date, user, type);  
+
     const movements = await Movement.aggregate([
       {
         $match: {date, user: toObjectId(user), type}
@@ -71,7 +75,6 @@ const movementService = {
       }
     ]);
 
-    console.log(movements);
     const [totalIncomes] = movements;
 
     return totalIncomes;
@@ -96,13 +99,38 @@ const movementService = {
       }
     ])
 
-    const formattedTransactions = movements.reduce( (acc, movement) => {
-      acc[movement._id] = movement.total;
+    const formattedTransactions = movements?.reduce( (acc, movement) => {
+      acc[`${movement._id}Mes`] = movement.total;
       return acc;
     }, {});
 
+
     return formattedTransactions;
 
+  },
+
+  getlastMovementsByDateAndUser: async({days, user}) => {
+
+    const { start, end } = getLastDays(days);
+
+    const movements = await Movement.find({
+      user,
+      date:{ 
+        $gte: start,
+        $lte: end 
+      }
+    }).lean();
+
+    const formattedMovements = movements.map( movement => ({
+      type: movement.type,
+      value: movement.value,
+      date: format(movement.date, 'yyyy-MM-dd'),
+    }));
+
+    return {
+      incomes: formattedMovements.filter( movement => movement.type === movementTypes.INCOME ),
+      expense: formattedMovements.filter( movement => movement.type === movementTypes.EXPENSE ),
+    };
   }
 
 }

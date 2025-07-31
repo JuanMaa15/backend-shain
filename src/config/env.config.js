@@ -3,5 +3,7 @@ export const {
   SALT_ROUNDS,
   NODE_ENV,
   ALLOWED_FRONTEND_URL,
+  RESEND_EMAIL,
+  RESEND_API_KEY,
   JWT_SECRET_KEY
 } =  process.env;

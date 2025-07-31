@@ -1,6 +1,9 @@
 import { configureTokenCookie } from "#config/cookie.config.js";
 import { createAccessToken } from "#libs/jwt.lib.js";
+import ResetToken from "#models/resetToken.model.js";
+import authService from "#services/auth.service.js";
 import userService from "#services/user.service.js";
+import { createSecureToken } from "#utils/others.js";
 
 const authController = {
 
@@ -10,7 +13,7 @@ const authController = {
 
     try {
       
-      const user = await userService.login({username, password});
+      const user = await authService.login({username, password});
 
       const token = await createAccessToken({id: user.id, username: user.username});
 
@@ -47,7 +50,7 @@ const authController = {
 
     try {
       
-      const newUser = await userService.registerUser(data);
+      const newUser = await authService.registerUser(data);
 
       const token = await createAccessToken({id: newUser._id, username: newUser.username}); 
 
@@ -69,7 +72,39 @@ const authController = {
 
     }
 
+  },
+
+  requestPasswordChange: async(req, res, next) => {
+
+    const {email} = req.body;
+
+    try {
+      
+      const user = await userService.getUserByEmail(email);
+
+      if (!user) return res.status.json({
+        status: 'success',
+        code: 200,
+        message: 'Si el correo existe, recibirás un enlace'
+      });
+
+      const token = createSecureToken();
+      const newResetToken = await ResetToken.create({user: user._id, token});
+
+
+      return res.status.json({
+        status: 'success',
+        code: 200,
+        message: 'Si el correo existe, recibirás un enlace'
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
   }
+
+
 
 }
 

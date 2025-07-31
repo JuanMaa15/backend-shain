@@ -11,6 +11,7 @@ router.post('/', validateSchema(movementSchema.createAndUpdate), movementControl
 router.patch('/:id', authorizeAccess({model:Movement}), validateSchema(movementSchema.createAndUpdate), movementController.updateMovement);
 router.delete('/:id', authorizeAccess({model:Movement}), movementController.deleteMovement);
 router.get('/summary', movementController.getSummary);
+router.get('/last', movementController.getMovementsLastDays);
 router.get('/', movementController.getMovementsByfilters);
 router.get('/:id', authorizeAccess({model:Movement}), movementController.getMovement);
 
