@@ -3,6 +3,7 @@ import { AppError } from "#utils/appError.js";
 import { SALT_ROUNDS } from '#config/env.config.js';
 import bcrypt from 'bcrypt'
 import userService from "./user.service.js";
+import businessService from "./business.service.js";
 
 const authService = {
   
@@ -27,7 +28,12 @@ const authService = {
 
     const formattedData = {...dataUser, password: hashedPassword};
 
-    return userService.createUser(formattedData);
+    const newUser = userService.createUser(formattedData);
+
+    //Crear negocio
+    await businessService.createBusiness({user:newUser._id});
+
+    return newUser;
 
   },
 

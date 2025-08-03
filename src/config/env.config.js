@@ -11,5 +11,10 @@ export const {
   EMAIL_HOST,
   EMAIL_PORT,
   EMAIL_USER,
-  EMAIL_PASS
+  EMAIL_PASS,
+
+  //Cloudinary
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET
 } =  process.env;

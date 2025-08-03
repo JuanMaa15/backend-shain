@@ -1,0 +1,49 @@
+import businessService from "#services/business.service.js";
+
+const businessController = {
+
+  updateBusiness: async(req, res, next) => {
+
+    const data = req.body;
+    const id = req.params.id;
+
+    try {
+
+      const updateBusiness = await businessService.updateBusiness(id, data);
+
+      return res.status(200).json({
+        status: 'sucess',
+        code: 200,
+        data: updateBusiness
+      });
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  getBusiness: async(req, res, next) => {
+
+    const {userId} = req.params;
+
+    try {
+
+      const bussines = await businessService.getOneBusinessByUser(userId);
+
+      return res.status(200).json({
+        status: 'sucess',
+        code: 200,
+        data: bussines
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  }
+
+
+
+}
+
+export default businessController;

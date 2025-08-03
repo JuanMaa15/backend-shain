@@ -16,9 +16,9 @@ const userService = {
 
   createUser: async(data) => await User.create(data),
 
-  updateUser: async(id, data) => await User.findOneAndUpdate(
-    { _id: id },
-    { $set: data },
+  updateUser: async(id, data) => await User.findByIdAndUpdate(
+    id,
+    data,
     { new: true }
   ),
 
