@@ -1,4 +1,7 @@
+import ResetToken from "#models/resetToken.model.js";
 import { AppError } from "#utils/appError.js";
+import { SALT_ROUNDS } from '#config/env.config.js';
+import bcrypt from 'bcrypt'
 import userService from "./user.service.js";
 
 const authService = {
@@ -20,7 +23,7 @@ const authService = {
     //Validar la confirmacion de contraseñas
     if (password !== confirmPassword) throw new AppError('error', 'Las contraseñas no coinciden', 400);
 
-    const hashedPassword = await userService.hashedPassword(password);
+    const hashedPassword = await authService.hashedPassword(password);
 
     const formattedData = {...dataUser, password: hashedPassword};
 
@@ -34,7 +37,7 @@ const authService = {
 
     if(!user) throw new AppError('error', 'Nombre de usuario o contraseña incorrectos.', 400);
 
-    const isValid = await userService.comparePassword(password, user.password);
+    const isValid = await authService.comparePassword(password, user.password);
 
     if (!isValid) throw new AppError('error', 'Nombre de usuario o contraseña incorrectos.', 400);
 
@@ -47,6 +50,33 @@ const authService = {
 
   },
 
+  
+
+  resetPassword: async({token, password, confirmPassword}) => {
+
+    const requestToken = await ResetToken.findOne({token, used: false});
+
+    if (!requestToken) throw new AppError('error', 'Token invalido o expirado', 401);
+
+    if (password !== confirmPassword) throw new AppError('error', 'Las contraseñas no coinciden', 400);
+
+    const hashedPassword = await authService.hashedPassword(password);
+
+    const updateUser = await userService.updateUser(
+      { _id: requestToken.user },
+      { $set: {password: hashedPassword} },
+      {new: true}
+    );
+
+    return updateUser;
+
+  },
+
+  hashedPassword: async(password) => await bcrypt.hash(password, parseInt(SALT_ROUNDS, 10)),
+
+  comparePassword: async(password, hashPassword) => await bcrypt.compare(password, hashPassword),
+
+   
   
   
 }

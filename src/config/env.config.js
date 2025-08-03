@@ -5,5 +5,11 @@ export const {
   ALLOWED_FRONTEND_URL,
   RESEND_EMAIL,
   RESEND_API_KEY,
-  JWT_SECRET_KEY
+  JWT_SECRET_KEY,
+
+  //Nodemailer
+  EMAIL_HOST,
+  EMAIL_PORT,
+  EMAIL_USER,
+  EMAIL_PASS
 } =  process.env;

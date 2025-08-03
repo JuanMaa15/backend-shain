@@ -2,6 +2,7 @@ import { configureTokenCookie } from "#config/cookie.config.js";
 import { createAccessToken } from "#libs/jwt.lib.js";
 import ResetToken from "#models/resetToken.model.js";
 import authService from "#services/auth.service.js";
+import mailService from "#services/mail.service.js";
 import userService from "#services/user.service.js";
 import { createSecureToken } from "#utils/others.js";
 
@@ -82,20 +83,43 @@ const authController = {
       
       const user = await userService.getUserByEmail(email);
 
-      if (!user) return res.status.json({
+      if (!user) return res.status(200).json({
         status: 'success',
         code: 200,
         message: 'Si el correo existe, recibirás un enlace'
       });
 
       const token = createSecureToken();
-      const newResetToken = await ResetToken.create({user: user._id, token});
-      
+      await ResetToken.create({user: user._id, token});
+      await mailService.sendResetMail({ email: user.email, token });
 
-      return res.status.json({
+      return res.status(200).json({
         status: 'success',
         code: 200,
         message: 'Si el correo existe, recibirás un enlace'
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  resetPassword: async(req, res, next) => {
+
+    const {token, password, confirmPassword} = req.body;
+
+    try {
+      
+      const user = await authService.resetPassword({token, password, confirmPassword});
+
+      return res.status(200).json({
+        status: 'sucesss',
+        code: 200,
+        data: {
+          id: user._id,
+          username: user.username
+        }
       });
 
     } catch (error) {

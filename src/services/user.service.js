@@ -1,7 +1,5 @@
-import { SALT_ROUNDS } from '#config/env.config.js';
 import User from '#models/user.model.js';
 import { AppError } from '#utils/appError.js';
-import bcrypt from 'bcrypt'
 import { differenceInDays } from 'date-fns';
 
 const userService = {
@@ -37,10 +35,6 @@ const userService = {
   getUserByEmail: async(email) => await User.findOne({email}),
 
   getUserByUsername: async(username) => await User.findOne({username}),
-
-  hashedPassword: async(password) => await bcrypt.hash(password, parseInt(SALT_ROUNDS, 10)),
-
-  comparePassword: async(password, hashPassword) => await bcrypt.compare(password, hashPassword),
 
 }
 
