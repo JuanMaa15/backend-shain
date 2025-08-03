@@ -7,8 +7,11 @@ import userSchema from '#schemas/user.schema.js';
 
 const router = Router();
 
-
-router.patch('/:id', authorizeAccess({model:User}), validateSchema(userSchema.updateProfile), userController.updateUser);
+router.get('/', userController.getUsers);
 router.get('/:id', authorizeAccess({model:User}), userController.getUser);
+router.patch('/me', validateSchema(userSchema.updateProfile), userController.updateMyprofile);
+router.patch('/:id', authorizeAccess({model:User}), validateSchema(userSchema.updateUser), userController.updateUser);
+router.patch('/:id/status', authorizeAccess({model: User}), userController.updateUserStatus);
+
 
 export default router;

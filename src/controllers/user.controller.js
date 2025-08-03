@@ -2,10 +2,10 @@ import userService from "#services/user.service.js";
 
 const userController = {
 
-  updateUser: async(req, res, next) => {
 
-    const {id} = req.params;
+  updateUser: async(req, res, next) => {
     const data = req.body;
+    const id = req.params.id;
 
     try {
       
@@ -17,9 +17,76 @@ const userController = {
         data: {
           name: updateUser.name,
           username: updateUser.username,
+          email: updateUser.email
+        }
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  updateUserStatus: async(req, res, next) => {
+
+    const {status} = req.query;
+    const user = req.user.id;
+
+    try {
+      
+      const updateUser = await userService.updateUser(user, {status});
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: {
+          name: updateUser.name,
+          username: updateUser.username,
+          email: updateUser.email
+        }
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  updateMyprofile: async(req, res, next) => {
+
+    const user = req.user.id;
+    const data = req.body;
+
+    try {
+      
+      const updateUser = await userService.updateUser(user, data);
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: {
+          name: updateUser.name,
+          username: updateUser.username,
           email: updateUser.email,
         } 
       }); 
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
+  getUsers: async(req, res, next) => {
+
+    try {
+      
+      const users = await userService.getAllUsers();
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: users
+      });
+
     } catch (error) {
       next(error);
     }
@@ -44,7 +111,7 @@ const userController = {
       next(error);
     }
 
-  }
+  },
 
 }   
 

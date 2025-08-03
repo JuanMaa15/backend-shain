@@ -22,6 +22,8 @@ const userService = {
     { new: true }
   ),
 
+  getAllUsers: async() => await User.find().select('-password'),
+
   getOneUser: async(id) => {
 
     const user = await User.findById(id, { password: 0 })

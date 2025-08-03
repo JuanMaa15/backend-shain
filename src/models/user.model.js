@@ -33,7 +33,8 @@ const userSchema = new Schema(
     status: {
       type: String,
       required: true,
-      default: 'activo'
+      default: 'activo',
+      enum: ['activo', 'inactivo']
     }
   },
   {
