@@ -28,8 +28,8 @@ const authService = {
 
     const formattedData = {...dataUser, password: hashedPassword};
 
-    const newUser = userService.createUser(formattedData);
-
+    const newUser = await userService.createUser(formattedData);
+    
     //Crear negocio
     await businessService.createBusiness({user:newUser._id});
 

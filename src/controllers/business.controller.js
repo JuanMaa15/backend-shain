@@ -6,10 +6,11 @@ const businessController = {
 
     const data = req.body;
     const id = req.params.id;
-
+    const imageBuffer = req.file?.buffer;
+    
     try {
 
-      const updateBusiness = await businessService.updateBusiness(id, data);
+      const updateBusiness = await businessService.updateBusiness({id, data, imageBuffer});
 
       return res.status(200).json({
         status: 'sucess',

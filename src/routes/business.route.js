@@ -3,14 +3,17 @@ import { authorizeAccess, authRequired } from "#middlewares/auth.middleware.js";
 import { validateSchema } from "#middlewares/validateSchema.middleware.js";
 import Business from "#models/business.model.js";
 import businessSchema from "#schemas/business.schema.js";
+import multer from 'multer';
 import { Router } from "express";
 
 const router = Router();
+const upload = multer({storage: multer.memoryStorage()});
 
 router.patch(
   '/:id', 
   authRequired, 
   authorizeAccess({model:Business}), 
+  upload.single('image'),
   validateSchema(businessSchema.updateBusiness), 
   businessController.updateBusiness
 );
