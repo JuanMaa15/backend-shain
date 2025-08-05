@@ -37,7 +37,7 @@ const bookingSchema = new Schema({
   }
 });
 
-const Booking = model('Booking', bookingSchema, 'Bookings');
+const Booking = model('Booking', bookingSchema, 'bookings');
 
 export default Booking;
 

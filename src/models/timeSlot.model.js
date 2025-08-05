@@ -22,6 +22,6 @@ const timeSlotSchema = new Schema({
   }
 });
 
-const TimeSlot = model('TimeSlot', timeSlotSchema, 'TimeSlots');
+const TimeSlot = model('TimeSlot', timeSlotSchema, 'timeSlots');
 
 export default TimeSlot;

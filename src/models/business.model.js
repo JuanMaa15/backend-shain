@@ -22,6 +22,6 @@ const businessSchema = new Schema({
   timestamps: true
 });
 
-const Business = model('Business', businessSchema, 'Business');
+const Business = model('Business', businessSchema, 'business');
 
 export default Business;
