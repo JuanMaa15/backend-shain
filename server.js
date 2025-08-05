@@ -4,6 +4,6 @@ import connectDB from "#config/db.config.js";
 
 connectDB();
 
-app.listen( PORT, () => {
+app.listen( PORT || 3000, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
