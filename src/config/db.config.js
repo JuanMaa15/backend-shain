@@ -7,7 +7,7 @@ const connectDB = async() => {
     console.log('Base de datos Conectada');
   } catch (error) {
     console.log('Error al intentar conectar con la base de datos');
-    console.error("❌ Error al conectar a MongoDB Atlas:", error.message);
+    console.log("❌ Error al conectar a MongoDB Atlas:", error.message);
   }
 }
 
