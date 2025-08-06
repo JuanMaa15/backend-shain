@@ -1,5 +1,5 @@
 import z from 'zod';
-import { safeString, safeStringOptional } from './utils/stringValidator';
+import { safeString, safeStringOptional } from './utils/stringValidator.js';
 
 const businessSchema = {
 
