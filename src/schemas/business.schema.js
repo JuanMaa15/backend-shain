@@ -1,13 +1,12 @@
 import z from 'zod';
+import { safeString, safeStringOptional } from './utils/stringValidator';
 
 const businessSchema = {
 
   updateBusiness: z.object({
-    name: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
+    name: safeString(),
+    goal: safeStringOptional(),
+    type: safeStringOptional()
   })
 
 }

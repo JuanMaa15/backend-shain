@@ -1,37 +1,18 @@
 import z from 'zod';
+import { safeString } from './utils/stringValidator.js';
 
 const movementSchema = {
 
   createAndUpdate: z.object({
-    type: z.string({
-      required_error: "Este campo es obligatorio *"
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
+    type: safeString(),
 
-    frecuencyType: z.string({
-      required_error: "Este campo es obligatorio *"
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
+    frecuencyType: safeString(),
 
-    value: z.string({
-      required_error: "Este campo es obligatorio *"
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
+    value: safeString(),
 
-    description: z.string({
-      required_error: "Este campo es obligatorio *"
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
+    description: safeString(),
 
-    date: z.string({
-      required_error: "Este campo es obligatorio *"
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    })
+    date: safeString()
   })
 
 }

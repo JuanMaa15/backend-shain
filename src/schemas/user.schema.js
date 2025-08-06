@@ -1,69 +1,32 @@
 import z from 'zod';
+import { safeEmail, safeString, safeStringOptional } from './utils/stringValidator.js';
 
 const userSchema = {
 
   updateProfile: z.object({
-    name: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
+    name: safeString(),
 
-    lastName: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
+    lastName: safeString(),
 
-    username: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
+    username: safeString(),
 
-    email: z.string({
-      required_error: 'Este campo es obligatorio'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }).email({
-      error: 'Email no valido'
-    }),
+    email: safeEmail(),
     
   }),
 
   updateUser: z.object({
-    name: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
+    name: safeString(),
 
-    lastName: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
+    lastName: safeString(),
 
-    username: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
+    username: safeString(),
 
-    email: z.string({
-      required_error: 'Este campo es obligatorio'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }).email({
-      error: 'Email no valido'
-    }),
+    email: safeEmail(),
 
-    role: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    })
+    role: safeString(),
     
+    phone: safeStringOptional()
+
   })
 
 

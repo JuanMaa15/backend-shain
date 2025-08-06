@@ -1,27 +1,14 @@
 import z from 'zod';
+import { safeString, safeText } from './utils/stringValidator.js';
 
 const bookingSchema = {
 
   create: z.object({
 
-    date:z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
-
-    timeSlot: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
-
-    customerName: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }),
-
+    date: safeString(),
+    timeSlot: safeString(),
+    customerName: safeString(),
+    description: safeText(),
     
   })
 

@@ -36,6 +36,21 @@ export const safeStringOptional = () =>
       : undefined              
   );
 
+export const safeText = () => 
+  z.string({
+    required_error: 'Este campo es obligatorio *'
+  }).regex(/^[^'"]*$/, {
+    error: 'No se permiten comillas'
+  }).max(500, {
+    error: "Máx. 500 caracteres"
+  }).transform((s) =>
+    s ? 
+      sanitizeHtml(s, {
+        allowedTags: [],       
+        allowedAttributes: {}  
+      }).trim()               
+      : undefined              
+  );
 
 export const safePassword = () => 
   z.string({
