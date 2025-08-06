@@ -1,94 +1,33 @@
 import z from 'zod';
+import {safeEmail, safePassword, safeString, safeStringOptional } from './utils/stringValidator.js';
 
 const authSchema = {
 
   register: z.object({
-    name: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-    
-    lastName: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-    
-    role: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-
-    username: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-
-    email: z.string({
-      required_error: 'Este campo es obligatorio'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }).email({
-      error: 'Email no valido'
-    }),
-
-    password: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-
-    confirmPassword: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    })
+    name: safeString(),
+    lastName: safeString(),
+    role: safeString(),
+    username: safeString(),
+    email: safeEmail(),
+    password: safePassword(),
+    confirmPassword: safePassword(),
+    phone: safeStringOptional(),
   }),
 
   login: z.object({
-    username: z.string({
-      required_error: "Este campo es obligatorio *"
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-
-    password: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    })
+    username: safeString(),
+    password: safeString()
   }),
 
   requestPassword: z.object({
-    email: z.string({
-      required_error: 'Este campo es obligatorio'
-    }).nonempty({
-      error: 'El campo no puede estar vacío'
-    }).email({
-      error: 'Email no valido'
-    }),
+    email: safeEmail(),
   }),
 
   resetPassword: z.object({
-    token: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-    password: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    }),
-    confirmPassword: z.string({
-      required_error: 'Este campo es obligatorio *'
-    }).nonempty({
-      error: 'El campo no puede estar vacío.'
-    })
-  })
+    token: safeString(),
+    password: safePassword(),
+    confirmPassword: safePassword()
+  }),
 
 }
 
