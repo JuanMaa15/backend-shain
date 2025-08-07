@@ -1,14 +1,18 @@
+import { userStatus } from '#config/constants.config.js';
 import User from '#models/user.model.js';
 import { AppError } from '#utils/appError.js';
 import { differenceInDays } from 'date-fns';
 
 const userService = {
 
-  validateTrialPeriod: (dateCreate, dateNow) => {
+  validateTrialPeriod: async({dateCreate, dateNow, userId}) => {
 
     const daysPassed = differenceInDays(dateNow, dateCreate);
 
-    if ( daysPassed > 14) return true;
+    if ( daysPassed > -1) {
+      await userService.updateUser(userId, {status: userStatus.INACTIVE});
+      return true;
+    } 
 
     return false;
 

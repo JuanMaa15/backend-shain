@@ -4,6 +4,7 @@ import { SALT_ROUNDS } from '#config/env.config.js';
 import bcrypt from 'bcrypt'
 import userService from "./user.service.js";
 import businessService from "./business.service.js";
+import { userStatus } from "#config/constants.config.js";
 
 const authService = {
   
@@ -47,8 +48,10 @@ const authService = {
 
     if (!isValid) throw new AppError('error', 'Nombre de usuario o contraseña incorrectos.', 400);
 
+    if (user.status === userStatus.INACTIVE) throw new AppError('error', 'Su cuenta se encuentra inactiva.', 401);
+
     //Validar si el periodo de prueba ya expirado
-    const hasTrialExpired = userService.validateTrialPeriod(new Date(user.createdAt), new Date() );
+    const hasTrialExpired = await userService.validateTrialPeriod({dateCreate: new Date(user.createdAt), dateNow: new Date(), userId: user._id });
 
     if (hasTrialExpired) throw new AppError('error', 'Tu periodo de prueba ha expirado. Por favor, actualiza tu plan.', 403);
 
