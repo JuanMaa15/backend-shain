@@ -121,7 +121,7 @@ const movementService = {
 
   getTotalTransactionsMonth: async(user) => {
 
-    const { start, end } = getMonthRange(new Date("2025-09-07"));
+    const { start, end } = getMonthRange();
     
     const movements = await Movement.aggregate([
       {

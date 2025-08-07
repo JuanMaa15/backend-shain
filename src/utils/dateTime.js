@@ -1,11 +1,12 @@
-import { endOfMonth, startOfMonth, subDays } from "date-fns";
-import { fromZonedTime } from "date-fns-tz";
+import { endOfMonth, format, startOfDay, startOfMonth, subDays } from "date-fns";
 
 const timeZone = 'America/Bogota'
 
 export const getMonthRange = (date = new Date()) => ({
-  start: fromZonedTime(startOfMonth(date), timeZone),
-  end: fromZonedTime(endOfMonth(date), timeZone)
+   start: toDateAtMidnightUTC(startOfMonth(date)),
+   end: toDateAtMidnightUTC(endOfMonth(date)),
+  /* start: fromZonedTime(startOfMonth(date), timeZone),
+   end: fromZonedTime(endOfMonth(date), timeZone) */
 });
 
 export const getLastDays = ( daysNumber = 0 ) => {
@@ -14,13 +15,20 @@ export const getLastDays = ( daysNumber = 0 ) => {
   const lastDays = subDays(dateNow, daysNumber);
 
   return {
-    start: fromZonedTime(lastDays, timeZone),
-    end: fromZonedTime(dateNow, timeZone)
+    start: toDateAtMidnightUTC(startOfDay(lastDays)),
+    end: toDateAtMidnightUTC(startOfDay(dateNow))
+   /*  start: fromZonedTime(lastDays, timeZone),
+    end: fromZonedTime(dateNow, timeZone) */
   }
 }; 
 
+export const toDateAtMidnightUTC = (date) => {
+  const dateStr = format(date, 'yyyy-MM-dd') + 'T00:00:00.000Z';
+  return new Date(dateStr)
+} 
 
-export const dateLocal = (date = new Date()) => {
+
+/* export const dateLocal = (date = new Date()) => {
 
   //// Si es Date, le ponemos hora local 00:00:00 con toISOString cortado
   if (date instanceof Date) {
@@ -34,4 +42,6 @@ export const dateLocal = (date = new Date()) => {
   }
 
   return null;
-}
+} */
+
+  
