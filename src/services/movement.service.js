@@ -49,36 +49,39 @@ const movementService = {
 
   getSummaryAndStatistics: async({date, user}) => {
 
-    const totalIncomesDay = await movementService.getTotalTransactionsDay({date: new Date(date), user, type: movementTypes.INCOME});
-    const totalExpensesDay = await movementService.getTotalTransactionsDay({date: new Date(date), user, type: movementTypes.EXPENSE});
-    const dailyBalance = totalIncomesDay - totalExpensesDay;
-
+  //Traer total ingresos y egresos del dia
+     const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
+   //calcular balance diario
+    const dailyBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
+   
+    //Traer total ingresos y egresos del mes
     const totalTransactionsMonth = await movementService.getTotalTransactionsMonth(user);
-    
-    const incomesMonth = totalTransactionsMonth?.egresoMes || 0;
+    //calcular balance mensual
+    const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
 
-    const calculationSales = await movementService.calculationSales({user, incomesMonth, dailyBalance, date});
+    const calculationSales = await movementService.calculationSales({user, monthBalance, dailyBalance, date});
 
     const dataSummary = {
-      incomesDay: totalIncomesDay?.total || 0,
-      incomesMonth,
-      expensesMonth: totalTransactionsMonth?.egresoMes || 0,
+      totalTransactionsDay,
+      dailyBalance,
+      totalTransactionsMonth,
+      monthBalance,
       calculationSales
     }
 
     return dataSummary;
   },
 
-  calculationSales: async({user, incomesMonth, dailyBalance, date}) => {
+  calculationSales: async({user, monthBalance, dailyBalance, date}) => {
     const business = await businessService.getOneBusinessByUser(user);
-
+    
     //traer la fecha de ayer
     const yesterdayDate = subDays(new Date(date), 1);
-    //Calcular sus ingresos y egresos
-    const yesterdaytIncomes = await movementService.getTotalTransactionsDay({date: yesterdayDate, user, type: movementTypes.INCOME}) || 0; 
-    const yesterdaytExpenses = await movementService.getTotalTransactionsDay({date: yesterdayDate, user, type: movementTypes.EXPENSE}) || 0; 
-    //Calcular el balance de yer
-    const yesterdayBalance = yesterdaytIncomes - yesterdaytExpenses;
+    //Traer los ingresos y egresos de ayer
+    const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: yesterdayDate, user}); 
+
+    //Calcular el balance de ayer
+    const yesterdayBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
 
     //Incremento de ventas del dia con respecto ayer
     const salesIncreaseAmountDay = dailyBalance - yesterdayBalance;
@@ -87,40 +90,39 @@ const movementService = {
     const salesGrowthPercentageDay = ((dailyBalance - yesterdayBalance) / Math.abs(yesterdayBalance) ) * 100;
 
     //Calcular el porcentaje completado de ventas con respecto a la meta mensual
-    const salesCompletePercentageGoal = incomesMonth * 100 / business.goal;
+    const salesCompletePercentageGoal = monthBalance * 100 / business.goal || 0;
 
     return {
       salesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
-      salesGrowthPercentageDay: Math.round(salesGrowthPercentageDay),
+      salesGrowthPercentageDay: Math.round(salesGrowthPercentageDay) || 0,
       salesGrowthPercentageMonth: salesCompletePercentageGoal > 100 ? 100 : Math.round(salesCompletePercentageGoal),
-      goal: business.goal
+      goal: business.goal || 0
     }
 
   },
 
-  getTotalTransactionsDay: async({date, user, type}) => {
+  getTotalTransactionsDay: async({date, user}) => {
 
     const movements = await Movement.aggregate([
       {
-        $match: {date, user: toObjectId(user), type}
+        $match: {date, user: toObjectId(user)}
       },
       {
         $group: {
-          _id: null,
+          _id: "$type",
           total: { $sum: '$value' }
         }
       }
     ]);
 
-    const [totalIncomes] = movements;
+    return movementService.formatTransactions(movements);
 
-    return totalIncomes;
   },
 
   getTotalTransactionsMonth: async(user) => {
 
-    const { start, end } = getMonthRange();
-
+    const { start, end } = getMonthRange(new Date("2025-09-07"));
+    
     const movements = await Movement.aggregate([
       {
         $match: {
@@ -136,13 +138,7 @@ const movementService = {
       }
     ])
 
-    const formattedTransactions = movements?.reduce( (acc, movement) => {
-      acc[`${movement._id}Mes`] = movement.total;
-      return acc;
-    }, {});
-
-
-    return formattedTransactions;
+    return movementService.formatTransactions(movements);
 
   },
 
@@ -168,7 +164,22 @@ const movementService = {
       incomes: formattedMovements.filter( movement => movement.type === movementTypes.INCOME ),
       expense: formattedMovements.filter( movement => movement.type === movementTypes.EXPENSE ),
     };
-  }
+  },
+
+  formatTransactions: (movements) => {
+    //Convertir a objeto el array de movimientos
+    const formattedTransactions = movements?.reduce( (acc, movement) => {
+      acc[movement._id] = movement.total;
+      return acc;
+    }, {});
+
+    return {
+      incomes: formattedTransactions?.ingreso || 0,
+      expenses: formattedTransactions?.egreso || 0
+    };
+  },
+
+  
 
 }
 

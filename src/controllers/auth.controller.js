@@ -63,7 +63,7 @@ const authController = {
         data: {
           name: newUser.name,
           username: newUser.username,
-          email: newUser.username
+          email: newUser.email
         }
       });
 

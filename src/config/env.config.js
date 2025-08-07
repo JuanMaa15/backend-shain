@@ -7,6 +7,7 @@ export const {
   RESEND_API_KEY,
   JWT_SECRET_KEY,
   MONGODB_URI,
+  MONGODB_LOCAL,
 
   //Nodemailer
   EMAIL_HOST,
