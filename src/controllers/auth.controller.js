@@ -16,7 +16,12 @@ const authController = {
       
       const user = await authService.login({username, password});
 
-      const token = await createAccessToken({id: user.id, username: user.username, status: user.status});
+      const token = await createAccessToken({
+        id: user.id, 
+        username: user.username, 
+        status: user.status,
+        role: user.role
+      });
 
       configureTokenCookie(res, token);
 
@@ -25,7 +30,8 @@ const authController = {
         data: {
           id: user.id,
           username: user.username,
-          status: user.status
+          status: user.status,
+          role: user.role
         }
       });
 
@@ -54,7 +60,12 @@ const authController = {
       
       const newUser = await authService.registerUser(data);
 
-      const token = await createAccessToken({id: newUser._id, username: newUser.username, status: newUser.status}); 
+      const token = await createAccessToken({
+        id: newUser._id, 
+        username: newUser.username, 
+        status: newUser.status,
+        role: newUser.role
+      }); 
 
       configureTokenCookie(res, token);
 
@@ -64,7 +75,8 @@ const authController = {
         data: {
           name: newUser.name,
           username: newUser.username,
-          email: newUser.email
+          email: newUser.email,
+          role: newUser.role
         }
       });
 

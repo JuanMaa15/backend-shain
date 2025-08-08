@@ -5,7 +5,8 @@ import movementRouter from "#routes/movement.route.js";
 import timeSlotRouter from "#routes/timeSlot.route.js";
 import bookingRouter from "#routes/booking.route.js";
 import businessRouter from "#routes/business.route.js";
-import { authRequired } from "#middlewares/auth.middleware.js";
+import { authorizeRole, authRequired } from "#middlewares/auth.middleware.js";
+import { userRoles } from "#config/constants.config.js";
 
 const router = Router();
 
@@ -13,7 +14,7 @@ router.use('/auth', authRouter);
 router.use('/users', authRequired, userRouter);
 router.use('/movements', authRequired, movementRouter);
 router.use('/timeslots', authRequired, timeSlotRouter);
-router.use('/bookings', authRequired, bookingRouter);
+router.use('/bookings', authRequired, authorizeRole(userRoles.BARBER), bookingRouter);
 router.use('/business', authRequired, businessRouter);
 
 export default router;

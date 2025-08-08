@@ -68,3 +68,18 @@ export const authorizeAccess = ({model}) => async(req, res, next) => {
   }
 
 }
+
+export const authorizeRole = (...allowedRoles) => async(req, res, next) => {
+  
+  const roleUser = req.user.role; 
+
+  if (!allowedRoles.includes(roleUser)) 
+    return res.status(401).json({
+      status: 'Unauthorized',
+      code: 401,
+      message: 'Autorización denegada'
+    });
+
+  return next();
+
+}
