@@ -17,4 +17,6 @@ router.patch(
   businessController.updateBusiness
 );
 
+router.get('/:userId', businessController.getBusiness);
+
 export default router;
