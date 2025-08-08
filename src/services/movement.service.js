@@ -90,13 +90,13 @@ const movementService = {
     const salesGrowthPercentageDay = ((dailyBalance - yesterdayBalance) / Math.abs(yesterdayBalance) ) * 100;
 
     //Calcular el porcentaje completado de ventas con respecto a la meta mensual
-    const salesCompletePercentageGoal = monthBalance * 100 / business.goal || 0;
+    const salesCompletePercentageGoal = monthBalance * 100 / business?.goal || 0;
 
     return {
       salesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
       salesGrowthPercentageDay: Math.round(salesGrowthPercentageDay) || 0,
       salesGrowthPercentageMonth: salesCompletePercentageGoal > 100 ? 100 : Math.round(salesCompletePercentageGoal),
-      goal: business.goal || 0
+      goal: business?.goal || 0
     }
 
   },
