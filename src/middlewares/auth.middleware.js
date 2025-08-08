@@ -1,3 +1,4 @@
+import { userStatus } from "#config/constants.config.js";
 import { JWT_SECRET_KEY } from "#config/env.config.js";
 import jwt from "jsonwebtoken";
 
@@ -15,6 +16,13 @@ export const authRequired = async(req, res, next) => {
   try {
     const user = await jwt.verify(token, JWT_SECRET_KEY);
     req.user = user;
+
+    if (req.user.status === userStatus.INACTIVE) 
+      return res.status(401).json({
+        status: 'Unauthorized',
+        code: 401,
+        message: 'Su cuenta se encuentra inactiva'
+      });
 
     return next();
   } catch (error) {

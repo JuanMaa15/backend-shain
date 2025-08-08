@@ -11,7 +11,7 @@ router.get('/', userController.getUsers);
 router.get('/:id', authorizeAccess({model:User}), userController.getUser);
 router.patch('/me', validateSchema(userSchema.updateProfile), userController.updateMyprofile);
 router.patch('/:id', authorizeAccess({model:User}), validateSchema(userSchema.updateUser), userController.updateUser);
-router.patch('/:id/status', authorizeAccess({model: User}), userController.updateUserStatus);
+router.patch('/:id/status', userController.updateUserStatus);
 
 
 export default router;

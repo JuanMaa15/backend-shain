@@ -49,9 +49,9 @@ const movementService = {
 
   getSummaryAndStatistics: async({date, user}) => {
 
-  //Traer total ingresos y egresos del dia
-     const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
-   //calcular balance diario
+    //Traer total ingresos y egresos del dia
+    const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
+    //calcular balance diario
     const dailyBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
    
     //Traer total ingresos y egresos del mes
@@ -157,9 +157,9 @@ const movementService = {
     const formattedMovements = movements.map( movement => ({
       type: movement.type,
       value: movement.value,
-      date: format(movement.date, 'yyyy-MM-dd'),
+      date: movement.date.toISOString().slice(0, 10),
     }));
-
+    
     return {
       incomes: formattedMovements.filter( movement => movement.type === movementTypes.INCOME ),
       expense: formattedMovements.filter( movement => movement.type === movementTypes.EXPENSE ),
