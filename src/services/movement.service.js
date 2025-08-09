@@ -51,6 +51,7 @@ const movementService = {
 
     //Traer total ingresos y egresos del dia
     const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
+    const existMovements = totalTransactionsDay.incomes !== 0 || totalTransactionsDay.expenses !== 0;
     //calcular balance diario
     const dailyBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
    
@@ -60,6 +61,12 @@ const movementService = {
     const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
 
     const calculationSales = await movementService.calculationSales({user, monthBalance, dailyBalance, date});
+
+    //Si no hay movimientos y el balance diario es menor o igual a 0  no hubieron aumento de ventas
+    if ( !existMovements ) { 
+      calculationSales.salesIncreaseAmountDay = 0;
+      calculationSales.salesGrowthPercentageDay = 0;
+    };
 
     const dataSummary = {
       totalTransactionsDay,
@@ -74,7 +81,8 @@ const movementService = {
 
   calculationSales: async({user, monthBalance, dailyBalance, date}) => {
     const business = await businessService.getOneBusinessByUser(user);
-    
+    const goal = Number(business?.goal) || 0;
+
     //traer la fecha de ayer
     const yesterdayDate = subDays(new Date(date), 1);
     //Traer los ingresos y egresos de ayer
@@ -86,16 +94,27 @@ const movementService = {
     //Incremento de ventas del dia con respecto ayer
     const salesIncreaseAmountDay = dailyBalance - yesterdayBalance;
 
-    //Calculo de porcentaje de crecimiento de ventas del dia con respecto ayer
-    const salesGrowthPercentageDay = ((dailyBalance - yesterdayBalance) / Math.abs(yesterdayBalance) ) * 100;
-    //Calcular el porcentaje completado de ventas con respecto a la meta mensual
-    const salesCompletePercentageGoal = monthBalance * 100 / business?.goal || 0;
+    let salesGrowthPercentageDay;
+
+    if (yesterdayBalance === 0)
+      salesGrowthPercentageDay = dailyBalance === 0 ? 0 : null;
+    else
+      //Calculo de porcentaje de crecimiento de ventas del dia con respecto ayer
+      salesGrowthPercentageDay = (salesIncreaseAmountDay / Math.abs(yesterdayBalance)) * 100;
+
+
+    // % avance meta mensual (clamp 0-100)
+    let salesCompletePercentageGoal = 0;
+
+    if (goal > 0)
+      //Calcular el porcentaje completado de ventas con respecto a la meta mensual
+      salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / goal))); 
     
     return {
       salesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
-      salesGrowthPercentageDay: isFinite(salesGrowthPercentageDay) ? Math.round(salesGrowthPercentageDay) : 0,
-      salesGrowthPercentageMonth: salesCompletePercentageGoal > 100 ? 100 : Math.round(salesCompletePercentageGoal),
-      goal: business?.goal || 0
+      salesGrowthPercentageDay: salesGrowthPercentageDay === null ? 0 : (isFinite(salesGrowthPercentageDay) ? Math.round(salesGrowthPercentageDay) : 0),
+      salesGrowthPercentageMonth: salesCompletePercentageGoal,
+      goal
     }
 
   },
