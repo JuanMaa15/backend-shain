@@ -6,15 +6,11 @@ const mailService = {
   sendResetMail: async({email, token}) => {
 
     const url = `${ALLOWED_FRONTEND_URL}/reset-password?token=${token}`;
-
-    let mail;
+    
     if ( NODE_ENV !== 'development' ) 
-      mail = await mailService.sendResend({email, url});
+      await mailService.sendResend({email, url});
     else
-      mail = await mailService.sendNodemailer({email, url});
-
-    console.log(mail);
-
+      await mailService.sendNodemailer({email, url});
   },
 
   sendResend: async({email, url}) => await resend.emails.send({

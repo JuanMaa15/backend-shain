@@ -2,7 +2,7 @@ import rateLimit from 'express-rate-limit';
 
 //Limitador general
 export const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 10 * 60 * 1000,
   max: 100,
   handler: (req, res) => {
     res.status(429).json({
