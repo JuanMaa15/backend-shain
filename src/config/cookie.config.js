@@ -4,6 +4,7 @@ export const configureTokenCookie = (res, token) => {
   res.cookie('token_shain', token, {
     httpOnly: true,
     secure: NODE_ENV === 'production',
-    sameSite: NODE_ENV === 'production' ? 'none' : 'strict'
+    sameSite: NODE_ENV === 'production' ? 'none' : 'strict',
+    path: '/'
   });
 }
