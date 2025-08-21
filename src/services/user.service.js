@@ -26,6 +26,11 @@ const userService = {
     { new: true }
   ),
 
+  getUsersByReferredByCode: async(referredByCode) => await User.find({referredByCode}),
+
+  getUsersWithReferralCode: async() => await User.find({referralCode: {$ne: null}}),
+
+
   getAllUsers: async() => await User.find().select('-password'),
 
   getOneUser: async(id) => {
@@ -41,6 +46,8 @@ const userService = {
   getUserByEmail: async(email) => await User.findOne({email}),
 
   getUserByUsername: async(username) => await User.findOne({username}),
+
+
 
 }
 

@@ -113,6 +113,42 @@ const userController = {
 
   },
 
+  getUsersWithReferralCode: async(req, res, next) => {
+    try {
+      
+      const users = await userService.getUsersWithReferralCode();
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: users
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  getUsersByReferredByCode: async(req, res, next) => {
+
+    const {code: referredByCode} = req.query;
+
+    try {
+      
+      const users = await userService.getUsersByReferredByCode(referredByCode);
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: users
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  }
+
 }   
 
 export default userController;

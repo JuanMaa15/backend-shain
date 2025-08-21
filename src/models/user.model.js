@@ -31,6 +31,16 @@ const userSchema = new Schema(
     phone: {
       type:String
     },
+    referralCode: {
+      type: String,
+      sparse: true,
+      unique: true,
+      default: null,
+    },
+    referredByCode: {
+      type: String,
+      default: null,
+    },
     status: {
       type: String,
       required: true,
