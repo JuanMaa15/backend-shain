@@ -26,6 +26,23 @@ const userService = {
     { new: true }
   ),
 
+  updateReferralCodeUser: async(id, referralCode) => {
+
+    //Validar que el nuevo codigo no exista en el sistema
+    const user = await User.findOne({referralCode});
+
+    if (user) throw new AppError('error', 'El código ya existe en el sistema.', 409);
+
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      {referralCode},
+      {new: true}
+    );
+
+    return updateUser;
+
+  },
+
   getUsersByReferredByCode: async(referredByCode) => await User.find({referredByCode}),
 
   getUsersWithReferralCode: async() => await User.find({referralCode: {$ne: null}}),

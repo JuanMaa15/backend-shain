@@ -12,9 +12,11 @@ router.get('/', authorizeRole(userRoles.ADMIN), userController.getUsers);
 router.get('/referral-code', authorizeRole(userRoles.ADMIN), userController.getUsersWithReferralCode);
 router.get('/referred-code', authorizeRole(userRoles.ADMIN), userController.getUsersByReferredByCode);
 router.get('/:id', authorizeAccess({model:User}), userController.getUser);
+router.patch('/:id/status', authorizeRole(userRoles.ADMIN), userController.updateUserStatus);
+router.patch('/:id/referral-code', authorizeRole(userRoles.ADMIN), validateSchema(userSchema.updateReferralCode), userController.updateReferralCodeUser);
 router.patch('/me', authorizeRole(userRoles.BARBER, userRoles.BUSINESS_OWNER), validateSchema(userSchema.updateProfile), userController.updateMyprofile);
 router.patch('/:id', authorizeRole(userRoles.ADMIN), authorizeAccess({model:User}), validateSchema(userSchema.updateUser), userController.updateUser);
-router.patch('/:id/status', authorizeRole(userRoles.ADMIN), userController.updateUserStatus);
+
 
 
 export default router;

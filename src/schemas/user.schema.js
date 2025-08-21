@@ -25,8 +25,12 @@ const userSchema = {
 
     role: safeString(),
     
-    phone: safeStringOptional()
+    phone: safeStringOptional(),
 
+  }),
+
+  updateReferralCode: z.object({
+    referralCode: safeString(),
   })
 
 

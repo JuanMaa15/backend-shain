@@ -51,6 +51,33 @@ const userController = {
 
   },
 
+  updateReferralCodeUser: async(req, res, next) => {
+
+    const {referralCode} = req.body;
+    const {id} = req.params;
+
+    try {
+      
+      const updateUser = await userService.updateReferralCodeUser(id, referralCode);
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: {
+          name: updateUser.name,
+          username: updateUser.username,
+          email: updateUser.email,
+          referralCode: updateUser.referralCode
+        }
+
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
   updateMyprofile: async(req, res, next) => {
 
     const user = req.user.id;
