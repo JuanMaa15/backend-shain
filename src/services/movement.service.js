@@ -41,7 +41,10 @@ const movementService = {
     else
       movements = await Movement.find({user});
 
-    return movements;
+    return movements.map( movement => ({
+      ...movement._doc,
+      date: movement.date.toISOString().slice(0, 10),
+    }) );
 
   },
 
