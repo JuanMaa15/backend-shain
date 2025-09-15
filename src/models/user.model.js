@@ -33,13 +33,13 @@ const userSchema = new Schema(
     },
     referralCode: {
       type: String,
-      sparse: true,
-      unique: true,
-      default: null,
+      //sparse: true,
+      //unique: true,
+      default: 'no-code',
     },
     referredByCode: {
       type: String,
-      default: null,
+      default: 'no-code',
     },
     status: {
       type: String,

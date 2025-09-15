@@ -45,7 +45,7 @@ const userService = {
 
   getUsersByReferredByCode: async(referredByCode) => await User.find({referredByCode}),
 
-  getUsersWithReferralCode: async() => await User.find({referralCode: {$ne: null}}),
+  getUsersWithReferralCode: async() => await User.find({referralCode: {$ne: 'no-code'}}),
 
 
   getAllUsers: async() => await User.find().select('-password'),
