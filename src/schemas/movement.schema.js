@@ -1,12 +1,12 @@
 import z from 'zod';
-import { safeString } from './utils/stringValidator.js';
+import { safeString, safeStringOptional } from './utils/stringValidator.js';
 
 const movementSchema = {
 
   createAndUpdate: z.object({
     type: safeString(),
 
-    frecuencyType: safeString(),
+    frecuencyType: safeStringOptional(),
 
     value: safeString(),
 
