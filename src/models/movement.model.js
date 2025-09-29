@@ -11,7 +11,7 @@ const movementSchema = new Schema(
     },
     frecuencyType: {
       type: String,
-      enum: ['nuevo', 'recurrente'],
+      enum: ['nuevo', 'recurrente', ''],
       lowercase: true
     },
     value: {

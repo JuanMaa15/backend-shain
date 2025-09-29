@@ -14,7 +14,7 @@ router.get('/referred-code', authorizeRole(userRoles.ADMIN), userController.getU
 router.get('/:id', authorizeAccess({model:User}), userController.getUser);
 router.patch('/:id/status', authorizeRole(userRoles.ADMIN), userController.updateUserStatus);
 router.patch('/:id/referral-code', authorizeRole(userRoles.ADMIN), validateSchema(userSchema.updateReferralCode), userController.updateReferralCodeUser);
-router.patch('/me', authorizeRole(userRoles.BARBER, userRoles.BUSINESS_OWNER), validateSchema(userSchema.updateProfile), userController.updateMyprofile);
+router.patch('/me', authorizeRole(userRoles.SERVICE_PROVIDER, userRoles.BUSINESS_OWNER), validateSchema(userSchema.updateProfile), userController.updateMyprofile);
 router.patch('/:id', authorizeRole(userRoles.ADMIN), authorizeAccess({model:User}), validateSchema(userSchema.updateUser), userController.updateUser);
 
 

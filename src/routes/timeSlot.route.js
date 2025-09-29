@@ -7,7 +7,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get('/available', authorizeRole(userRoles.BARBER), timeSlotController.getAvailablesHours);
+router.get('/available', authorizeRole(userRoles.SERVICE_PROVIDER, userRoles.BUSINESS_OWNER), timeSlotController.getAvailablesHours);
 router.post('/', authorizeRole(userRoles.ADMIN), validateSchema(timeSlotSchema.create), timeSlotController.createTimeSlot);
 
 export default router;

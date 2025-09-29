@@ -10,9 +10,17 @@ const movementSchema = {
 
     value: safeString(),
 
-    description: safeString(),
+    description: safeStringOptional(),
 
     date: safeString()
+  }).refine( (data) => {
+    if (data.type === "egreso" && !data.description) {
+      return false;
+    }
+    return true;
+  }, {
+    path: ["description"],
+    message: "La descripción es obligatoria"
   })
 
 }

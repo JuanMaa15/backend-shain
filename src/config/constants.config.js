@@ -11,5 +11,5 @@ export const userStatus = {
 export const userRoles = {
   ADMIN: 'admin',
   BUSINESS_OWNER: 'propietario_negocio',
-  BARBER:'barbero' 
+  SERVICE_PROVIDER:'prestador_servicios' 
 }

@@ -56,7 +56,7 @@ const movementService = {
     const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
     const existMovements = totalTransactionsDay.incomes !== 0 || totalTransactionsDay.expenses !== 0;
     //calcular balance diario
-    const dailyBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
+    const dailyBalance = totalTransactionsDay.incomes;
    
     //Traer total ingresos y egresos del mes
     const totalTransactionsMonth = await movementService.getTotalTransactionsMonth(user);
