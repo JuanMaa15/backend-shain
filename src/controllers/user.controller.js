@@ -174,7 +174,25 @@ const userController = {
       next(error);
     }
 
-  }
+  },
+
+  getUsersByBusiness: async(req, res, next) => {
+
+    const { business } = req.user;
+
+    try {
+      
+      const users = await userService.getUsersByBusiness(business);
+
+      return res.status(200).json({
+        users
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
 
 }   
 

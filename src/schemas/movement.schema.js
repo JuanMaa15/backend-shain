@@ -1,5 +1,6 @@
 import z from 'zod';
 import { safeString, safeStringOptional } from './utils/stringValidator.js';
+import { movementTypes } from '#config/constants.config.js';
 
 const movementSchema = {
 
@@ -14,7 +15,7 @@ const movementSchema = {
 
     date: safeString()
   }).refine( (data) => {
-    if (data.type === "egreso" && !data.description) {
+    if (data.type === movementTypes.EXPENSE && !data.description) {
       return false;
     }
     return true;

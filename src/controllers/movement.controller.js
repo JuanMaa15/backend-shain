@@ -64,14 +64,14 @@ const movementController = {
   getMovementsByfilters: async(req, res, next) => {
 
     const {type} = req.query;
-    const user = req.user.id;
+    const user = req.params.userId;
 
     try {
 
       const movements = await movementService.getMovementsByTypeAndUser(type, user);
 
-      res.status(200).json({
-        status: 'sucess',
+      return res.status(200).json({
+        status: 'success',
         code: 200,
         data: movements
 
@@ -105,7 +105,7 @@ const movementController = {
   getSummary: async(req, res, next) => {
 
     const {date} = req.query;
-    const user = req.user.id;
+    const user = req.params.userId;
     
     try {
       

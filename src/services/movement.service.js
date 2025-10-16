@@ -52,6 +52,10 @@ const movementService = {
 
   getSummaryAndStatistics: async({date, user}) => {
 
+    //Traer total de ingresos y egresos
+    /* const totalTransactions = await movementService.getTotalTransactions(user);
+    const totalBalance = totalTransactions.incomes; */
+
     //Traer total ingresos y egresos del dia
     const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
     const existMovements = totalTransactionsDay.incomes !== 0 || totalTransactionsDay.expenses !== 0;
@@ -121,6 +125,23 @@ const movementService = {
     }
 
   },
+
+  getTotalTransactionsByUser: async(user) => {
+    const movements = await Movement.aggregate([
+      {
+        $match: {user: toObjectId(user)}
+      },
+      {
+        $group: {
+          _id: "$type",
+          total: { $sum: '$value' }
+        }
+      }
+    ]);
+
+    return movementService.formatTransactions(movements);
+  },
+
 
   getTotalTransactionsDay: async({date, user}) => {
 

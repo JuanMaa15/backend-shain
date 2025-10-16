@@ -41,6 +41,11 @@ const userSchema = new Schema(
       type: String,
       default: 'no-code',
     },
+    business: {
+      type: Schema.Types.ObjectId,
+      ref: 'Business',
+      default: null,
+    },
     status: {
       type: String,
       required: true,
