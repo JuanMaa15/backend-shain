@@ -20,7 +20,8 @@ const authController = {
         id: user.id, 
         username: user.username, 
         status: user.status,
-        role: user.role
+        role: user.role,
+        business: user.business
       });
 
       configureTokenCookie(res, token);
@@ -31,7 +32,8 @@ const authController = {
           id: user.id,
           username: user.username,
           status: user.status,
-          role: user.role
+          role: user.role,
+          business: user.business
         }
       });
 
@@ -64,7 +66,8 @@ const authController = {
         id: newUser._id, 
         username: newUser.username, 
         status: newUser.status,
-        role: newUser.role
+        role: newUser.role, 
+        business: newUser.business
       }); 
 
       configureTokenCookie(res, token);
@@ -76,7 +79,8 @@ const authController = {
           name: newUser.name,
           username: newUser.username,
           email: newUser.email,
-          role: newUser.role
+          role: newUser.role,
+          business: newUser.business
         }
       });
 

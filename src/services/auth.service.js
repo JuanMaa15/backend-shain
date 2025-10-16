@@ -4,7 +4,8 @@ import { SALT_ROUNDS } from '#config/env.config.js';
 import bcrypt from 'bcrypt'
 import userService from "./user.service.js";
 import businessService from "./business.service.js";
-import { userStatus } from "#config/constants.config.js";
+import { userRoles, userStatus } from "#config/constants.config.js";
+import { generateCode } from "#utils/others.js";
 
 const authService = {
   
@@ -29,10 +30,44 @@ const authService = {
 
     const formattedData = {...dataUser, password: hashedPassword};
 
-    const newUser = await userService.createUser(formattedData);
+    // Verificar que el codigo de negocio ingresado si exista
+    let business = '';
+    if (data.role === userRoles.SERVICE_PROVIDER) {
+
+      business = await businessService.getOneBusinessbyCode( data.businessCode );
+
+      if (!business) throw new AppError('error', 'El código de negocio no existe', 400);
+
+    } 
+
+    let newUser = await userService.createUser(formattedData);
     
-    //Crear negocio
-    await businessService.createBusiness({user:newUser._id});
+
+    // Si el usuario es un prestador de servicio asignar la empresa a la que pertenece 
+    // segun el codigo proporcionado
+    if (data.role === userRoles.SERVICE_PROVIDER) {
+      const dataUpdate = { business: business._id };
+
+      const userUpdate = await userService.updateUser(newUser._id, dataUpdate);
+      newUser = userUpdate; 
+    } 
+
+    //Crear negocio solo para cuando el rol es un propietario de negocio
+    if ( data.role === userRoles.BUSINESS_OWNER ) {
+      const newBusiness = await businessService.createBusiness({
+        user:newUser._id, 
+        businessJoinCode: generateCode()
+      });
+
+      const dataUpdate = { business: newBusiness._id };
+
+      const userUpdate = await userService.updateUser(newUser._id, dataUpdate);
+
+      newUser = userUpdate; 
+
+    }
+
+    
 
     return newUser;
 
@@ -60,7 +95,6 @@ const authService = {
   },
 
   
-
   resetPassword: async({token, password, confirmPassword}) => {
 
     const requestToken = await ResetToken.findOne({token, used: false});

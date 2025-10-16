@@ -1,4 +1,4 @@
-import { userStatus } from "#config/constants.config.js";
+import { userRoles, userStatus } from "#config/constants.config.js";
 import { JWT_SECRET_KEY } from "#config/env.config.js";
 import jwt from "jsonwebtoken";
 
@@ -46,10 +46,18 @@ export const authRequired = async(req, res, next) => {
 export const authorizeAccess = ({model}) => async(req, res, next) => {
 
   const userId = req.user.id;
-  const registerId = req.params.id; 
+  const registerId = Object.values(req.params)[0]; //Devuelve el valor del parametro establecido
   
   try {
     const register = await model.findById(registerId);
+
+    //Si el usuario que inicio sesion es propietario y el usuario que va a buscar y traer
+    //pertenece a su negocio, continua (Esto solo si el registro obtenido es un usuario)
+    if (req.user.role === userRoles.BUSINESS_OWNER
+        && register.username //Verificar si tiene ese campo para validar si es un usuario
+        && req.user.business === register?.business.toString())  return next();
+    
+    //Si el usuario que inicio sesion coincide, continua
     if (userId === register?.user?.toString() || userId === register?._id.toString()) return next();
       
     return res.status(401).json({

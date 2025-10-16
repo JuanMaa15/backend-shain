@@ -21,6 +21,8 @@ const businessService = {
 
   getOneBusinessByUser: async(user) => await Business.findOne({user}),
 
+  getOneBusinessbyCode: async(code) => await Business.findOne({businessJoinCode: code}),
+
 }
 
 export default businessService;
