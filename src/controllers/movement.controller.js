@@ -4,7 +4,7 @@ const movementController = {
 
   createMovement: async(req, res, next) => {
 
-    const data = {...req.body, user: req.user.id};
+    const data = {...req.body, user: req.user.id, business: req.user.business};
 
     try {
       const newMovement = await movementService.createMovement(data);
@@ -106,10 +106,11 @@ const movementController = {
 
     const {date} = req.query;
     const user = req.params.userId;
+    const {role, business} = req.user;
     
     try {
       
-      const summary = await movementService.getSummaryAndStatistics({date, user});
+      const summary = await movementService.getSummaryAndStatistics({date, user, role, business});
 
       return res.status(200).json({
         status: 'success',

@@ -1,4 +1,4 @@
-import { movementTypes } from "#config/constants.config.js";
+import { movementTypes, userRoles } from "#config/constants.config.js";
 import Movement from "#models/movement.model.js";
 import { getLastDays, getMonthRange } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
@@ -50,11 +50,11 @@ const movementService = {
 
   getMovementsByUser: async(user) => await Movement.find({user}),
 
-  getSummaryAndStatistics: async({date, user}) => {
+  getSummaryAndStatistics: async({date, user, role, business}) => {
 
     //Traer total de ingresos y egresos
-    /* const totalTransactions = await movementService.getTotalTransactions(user);
-    const totalBalance = totalTransactions.incomes; */
+    const totalTransactions = await movementService.getTotalTransactionsByUser(user);
+    //const totalBalance = totalTransactions.incomes;
 
     //Traer total ingresos y egresos del dia
     const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
@@ -80,7 +80,23 @@ const movementService = {
       dailyBalance,
       totalTransactionsMonth,
       monthBalance,
-      calculationSales
+      calculationSales,
+      totalIncomes: totalTransactions.incomes,
+      totalExpenses: totalTransactions.expenses 
+    }
+
+    if (role === userRoles.BUSINESS_OWNER) {
+
+      const totalTransactionsBusiness = await movementService.getTotalTransactionsByBusiness(business);
+      
+
+
+      return { 
+        ...dataSummary,
+        totalBusinessIncomes: totalTransactionsBusiness.incomes,
+        totalBusinessExpenses: totalTransactionsBusiness.expenses,
+
+      }
     }
 
     return dataSummary;
@@ -125,6 +141,24 @@ const movementService = {
     }
 
   },
+
+  getTotalTransactionsByBusiness: async(business) => {
+    const movements = await Movement.aggregate([
+      {
+        $match: {
+          business: toObjectId(business)
+        }
+      },
+      {
+        $group: {
+          _id: "$type",
+          total: { $sum: '$value' }
+        }
+      }
+    ])
+
+    return movementService.formatTransactions(movements);
+  },  
 
   getTotalTransactionsByUser: async(user) => {
     const movements = await Movement.aggregate([

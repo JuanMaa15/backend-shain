@@ -6,4 +6,4 @@ export const toObjectId = (id) => new mongoose.Types.ObjectId(String(id));
 
 export const createSecureToken = () => crypto.randomBytes(32).toString('hex');
 
-export const generateCode = () => crypto.randomBytes(48).toString('hex');
+export const generateCode = () => crypto.randomBytes(16).toString('hex');

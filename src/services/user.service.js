@@ -64,7 +64,9 @@ const userService = {
 
   getUserByUsername: async(username) => await User.findOne({username}),
 
-  getUsersByBusiness: async(business) => await User.find({business}),
+  getUsersByBusiness: async(business) => 
+    await User.find({business})
+      .select('-password -__v'),
 
 }
 

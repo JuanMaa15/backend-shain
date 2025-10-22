@@ -54,7 +54,7 @@ export const authorizeAccess = ({model}) => async(req, res, next) => {
     //Si el usuario que inicio sesion es propietario y el usuario que va a buscar y traer
     //pertenece a su negocio, continua (Esto solo si el registro obtenido es un usuario)
     if (req.user.role === userRoles.BUSINESS_OWNER
-        && register.username //Verificar si tiene ese campo para validar si es un usuario
+        && register?.username //Verificar si tiene ese campo para validar si es un usuario
         && req.user.business === register?.business.toString())  return next();
     
     //Si el usuario que inicio sesion coincide, continua

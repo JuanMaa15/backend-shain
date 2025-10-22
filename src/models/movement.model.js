@@ -29,6 +29,11 @@ const movementSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
+    },
+    business: {
+      type: Schema.Types.ObjectId,
+      ref: 'Business',
+      required: true
     }
   },
   {
