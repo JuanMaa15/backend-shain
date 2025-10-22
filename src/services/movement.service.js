@@ -19,27 +19,19 @@ const movementService = {
 
   getOneMovement: async(id) => await Movement.findById(id),
 
-  getMovementsByFilters: async(type = '', user) => {
+  getMovementsByFilters: async({type, user, business}) => {
 
     let movements;
 
-    if (type) {
-      movements = await movementService.getMovementsByTypeAndUser(type, user);
-    }else{
-      movements = await movementService.getMovementsByUser(user);
-    }
-
-    return movements;
-  },
-
-  getMovementsByTypeAndUser: async(type, user) => {
-
-    let movements;
-
-    if (type)
+    if (type && user)
       movements = await Movement.find({type, user});
-    else
+    else if (user)
       movements = await Movement.find({user});
+
+    if (type && business)
+      movements = await Movement.find({type, business})
+    else if(business)
+      movements = await Movement.find({business});
 
     return movements.map( movement => ({
       ...movement._doc,
