@@ -71,7 +71,7 @@ const movementController = {
       if (req.params.userId ) {
         movements = await movementService.getMovementsByFilters({type, user: entity});
       }else if(req.params.businessId){
-         movements = await movementService.getMovementsByFilters({type, business: entity});
+        movements = await movementService.getMovementsByFilters({type, business: entity});
       }
 
       return res.status(200).json({

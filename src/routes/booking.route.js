@@ -7,5 +7,6 @@ const router = Router();
 
 router.post('/', validateSchema(bookingSchema.create), bookingController.createBooking);
 router.get('/', bookingController.getBookingsByFilters);
+router.delete('/:id', bookingController.deleteBooking);
 
 export default router;

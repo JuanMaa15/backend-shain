@@ -14,7 +14,7 @@ router.use('/auth', authRouter);
 router.use('/users', authRequired, userRouter);
 router.use('/movements', authRequired, movementRouter);
 router.use('/timeslots', authRequired, timeSlotRouter);
-router.use('/bookings', authRequired, authorizeRole(userRoles.BUSINESS_OWNER), bookingRouter);
-router.use('/business', authRequired, businessRouter);
+router.use('/bookings', authRequired, bookingRouter);
+router.use('/business', authRequired, authorizeRole(userRoles.BUSINESS_OWNER), businessRouter);
 
 export default router;

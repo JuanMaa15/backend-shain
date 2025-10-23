@@ -47,6 +47,22 @@ const bookingController = {
       next(error);
     }
 
+  }, 
+
+  deleteBooking: async(req, res, next) => {
+
+    const { id } = req.params;
+
+    try {
+      
+      await bookingService.deleteBooking(id);
+
+      return res.status(204);
+
+    } catch (error) {
+      next(error);
+    }
+
   }
 
 }

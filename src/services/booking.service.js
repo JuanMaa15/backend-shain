@@ -44,6 +44,8 @@ const bookingService = {
 
   getBookingByDateAndTimeSlot: async(date, timeSlot) => await Booking.findOne({date, timeSlot}),
 
+  deleteBooking: async(id) => await Booking.findByIdAndDelete(id)
+
 }
 
 export default bookingService;

@@ -5,7 +5,7 @@ export const configureTokenCookie = (res, token) => {
     httpOnly: true,
     secure: NODE_ENV === 'production',
     sameSite: NODE_ENV === 'production' ? 'lax' : 'strict',
-    domain: '.shain.finance',
+    domain: NODE_ENV === 'production' ? '.shain.finance' : '.use2.devtunnels.ms',
     path: '/'
   });
 }
