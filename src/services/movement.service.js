@@ -19,7 +19,7 @@ const movementService = {
 
   getOneMovement: async(id) => await Movement.findById(id),
 
-  getMovementsByFilters: async({type, user, business}) => {
+  getMovementsByFilters: async({type, user}) => {
 
     let movements;
 
@@ -27,11 +27,6 @@ const movementService = {
       movements = await Movement.find({type, user});
     else if (user)
       movements = await Movement.find({user});
-
-    if (type && business)
-      movements = await Movement.find({type, business})
-    else if(business)
-      movements = await Movement.find({business});
 
     return movements.map( movement => ({
       ...movement._doc,
@@ -41,6 +36,23 @@ const movementService = {
   },
 
   getMovementsByUser: async(user) => await Movement.find({user}),
+
+  getDailyMovementsByBusiness: async({ type, business }) => {
+
+    const movements = await Movement.find({type, business});
+
+    //const setMovements = [...new Set()]
+
+    //Obtener y remover fechas duplicadas de los registros de los movimientos devolviuendo 
+    //solo la fecha 
+    const movementsDates = [...new Map(
+      movements.map( item => [item.date.toISOString().slice(0, 10), item.date.toISOString().slice(0, 10) ] 
+      ) 
+    ).values()];
+
+    console.log(movementsDates);
+    return [];
+  },
 
   getSummaryAndStatistics: async({date, user, role, business}) => {
 
@@ -80,14 +92,15 @@ const movementService = {
     if (role === userRoles.BUSINESS_OWNER) {
 
       const totalTransactionsBusiness = await movementService.getTotalTransactionsByBusiness(business);
-      
 
+      //Margen de beneficio
+      const profitMargin = totalTransactionsBusiness.incomes - totalTransactionsBusiness.expenses;
 
       return { 
         ...dataSummary,
         totalBusinessIncomes: totalTransactionsBusiness.incomes,
         totalBusinessExpenses: totalTransactionsBusiness.expenses,
-
+        profitMargin
       }
     }
 

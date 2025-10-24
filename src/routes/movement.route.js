@@ -16,7 +16,7 @@ router.delete('/:id', authorizeAccess({model:Movement}), movementController.dele
 router.get('/summary/:userId', authorizeAccess({model:User}) ,movementController.getSummary);
 router.get('/last', movementController.getMovementsLastDays);
 router.get('/user/:userId', authorizeAccess({model:User}), movementController.getMovementsByfilters);
+router.get('/business/:businessId', authorizeRole(userRoles.BUSINESS_OWNER), authorizeAccess({model:Business}), movementController.getMovementsByfilters);
 router.get('/:id', authorizeAccess({model:Movement}), movementController.getMovement);
-router.get('/business/:businessId', authorizeRole(userRoles.BUSINESS_OWNER), authorizeAccess({model:Business}, movementController.getMovementsByBusiness));
 
 export default router;

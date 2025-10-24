@@ -4,7 +4,11 @@ const movementController = {
 
   createMovement: async(req, res, next) => {
 
-    const data = {...req.body, user: req.user.id, business: req.user.business};
+    const data = {
+      ...req.body,
+      user: req.user.id, 
+      business: req.user.business
+    };
 
     try {
       const newMovement = await movementService.createMovement(data);
@@ -62,16 +66,16 @@ const movementController = {
   },
 
   getMovementsByfilters: async(req, res, next) => {
-
+    console.log("Hola");
     const {type} = req.query;
     const entity = Object.values(req.params)[0];
-
+    
     try {
       let movements = {};
       if (req.params.userId ) {
         movements = await movementService.getMovementsByFilters({type, user: entity});
       }else if(req.params.businessId){
-        movements = await movementService.getMovementsByFilters({type, business: entity});
+        movements = await movementService.getDailyMovementsByBusiness({type, business: entity});
       }
 
       return res.status(200).json({
