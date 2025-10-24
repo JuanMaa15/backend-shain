@@ -41,8 +41,6 @@ const movementService = {
 
     const movements = await Movement.find({type, business});
 
-    //const setMovements = [...new Set()]
-
     //Obtener y remover fechas duplicadas de los registros de los movimientos devolviuendo 
     //solo la fecha 
     const movementsDates = [...new Map(
@@ -50,8 +48,41 @@ const movementService = {
       ) 
     ).values()];
 
-    console.log(movementsDates);
-    return [];
+    //
+    const movementsOnDay = await Promise.all(
+      movementsDates.map(async date => {
+
+        //Rango de horas de la fecha
+        const startDate = new Date(date);
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(date);
+        endDate.setHours(23, 59, 59, 999);
+
+        //Traer y agrupar los ingresos totales de la fecha 
+        const result = await Movement.aggregate([
+          {
+            $match: {
+              date: { $gte: startDate, $lte: endDate }
+            }
+          },
+          {
+            $group: { 
+              _id: date ,
+              value: {$sum: "$value"}
+            }
+          },
+        ]);
+
+        return {
+          date,
+          value: result[0].value
+        }
+      })
+    );
+    
+    //Ordenar por fechas y devolver
+    return movementsOnDay.sort( (a, b) => new Date(a.date) - new Date(b.date) );
   },
 
   getSummaryAndStatistics: async({date, user, role, business}) => {
