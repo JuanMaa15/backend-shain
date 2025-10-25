@@ -1,5 +1,6 @@
 import Booking from "#models/booking.model.js";
 import { AppError } from "#utils/appError.js";
+import { getDayRange, getMonthRange } from "#utils/dateTime.js";
 
 const bookingService = {
 
@@ -25,14 +26,28 @@ const bookingService = {
   },
 
 
-  getBookingsByFilters: async({date = '', user}) => {
+  getBookingsByFilters: async({filter, user}) => {
 
     let bookings;
-  
-    if (date)
-      bookings = await bookingService.getBookingsByDateAndUser(new Date(date), user);
-    else
+
+    //Opciones para las diferentes consultas segun los filtros ingresados 
+    const optionsQuery = {
+      day: () => { 
+        const { start, end } = getDayRange();
+        return { date: { $gte: start, $lte: end  } }
+      },
+      month: () => {
+        const { start, end } = getMonthRange();
+        return { date: { $gte: start, $lte: end  } }
+      }, 
+    }
+    
+    if (filter && filter !== 'all'){
+      const query = optionsQuery[filter];
+      bookings = await bookingService.getBookingsByDateAndUser(query.date, user);
+    }else {
       bookings = await bookingService.getBookingsByUser(user);
+    }
 
     return bookings;
 

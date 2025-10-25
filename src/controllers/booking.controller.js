@@ -30,12 +30,12 @@ const bookingController = {
 
   getBookingsByFilters: async(req, res, next) => {
 
-    const {date} = req.query;
+    const {filter} = req.query; //today - month - all
     const user = req.user.id;
   
     try {
       
-      const bookings = await bookingService.getBookingsByFilters({date, user});
+      const bookings = await bookingService.getBookingsByFilters({filter, user});
 
       return res.status(200).json({
         status: 'success',

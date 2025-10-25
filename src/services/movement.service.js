@@ -1,6 +1,6 @@
 import { movementTypes, userRoles } from "#config/constants.config.js";
 import Movement from "#models/movement.model.js";
-import { getLastDays, getMonthRange } from "#utils/dateTime.js";
+import { getDayRange, getLastDays, getMonthRange } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
 import { format, subDays } from "date-fns";
 import businessService from "./business.service.js";
@@ -53,17 +53,13 @@ const movementService = {
       movementsDates.map(async date => {
 
         //Rango de horas de la fecha
-        const startDate = new Date(date);
-        startDate.setHours(0, 0, 0, 0);
-
-        const endDate = new Date(date);
-        endDate.setHours(23, 59, 59, 999);
-
+        const { start, end } = getDayRange( new Date(date) );
+   
         //Traer y agrupar los ingresos totales de la fecha 
         const result = await Movement.aggregate([
           {
             $match: {
-              date: { $gte: startDate, $lte: endDate }
+              date: { $gte: start, $lte: end }
             }
           },
           {

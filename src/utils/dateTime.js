@@ -2,6 +2,12 @@ import { endOfMonth, format, startOfDay, startOfMonth, subDays } from "date-fns"
 
 const timeZone = 'America/Bogota'
 
+
+export const getDayRange = (date = new Date()) => ({
+  start: new Date(date.setHours(0, 0 ,0, 0)),
+  end: new Date(date.setHours(23, 59, 59, 999))
+});
+
 export const getMonthRange = (date = new Date()) => ({
   start: toDateAtMidnightUTC(startOfMonth(date)),
   end: toDateAtMidnightUTC(endOfMonth(date)),
