@@ -114,11 +114,11 @@ const movementController = {
 
     const {date} = req.query;
     const user = req.params.userId;
-    const {role, business} = req.user;
+    const {role, business, goal} = req.user;
     
     try {
       
-      const summary = await movementService.getSummaryAndStatistics({date, user, role, business});
+      const summary = await movementService.getSummaryAndStatistics({date, user, role, business, goalUser:goal});
 
       return res.status(200).json({
         status: 'success',

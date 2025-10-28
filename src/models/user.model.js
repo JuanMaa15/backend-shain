@@ -46,6 +46,10 @@ const userSchema = new Schema(
       ref: 'Business',
       default: null,
     },
+    goal: {
+      type: Number,
+      default: 0
+    },
     status: {
       type: String,
       required: true,

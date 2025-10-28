@@ -81,7 +81,7 @@ const movementService = {
     return movementsOnDay.sort( (a, b) => new Date(a.date) - new Date(b.date) );
   },
 
-  getSummaryAndStatistics: async({date, user, role, business}) => {
+  getSummaryAndStatistics: async({date, user, role, business, goalUser}) => {
 
     //Traer total de ingresos y egresos
     const totalTransactions = await movementService.getTotalTransactionsByUser(user);
@@ -98,7 +98,7 @@ const movementService = {
     //calcular balance mensual
     const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
 
-    const calculationSales = await movementService.calculationSales({user, monthBalance, dailyBalance, date});
+    const calculationSales = await movementService.calculationSales({user, monthBalance, dailyBalance, date, role, goalUser});
 
     //Si no hay movimientos y el balance diario es menor o igual a 0  no hubieron aumento de ventas
     if ( !existMovements ) { 
@@ -134,7 +134,7 @@ const movementService = {
     return dataSummary;
   },
 
-  calculationSales: async({user, monthBalance, dailyBalance, date}) => {
+  calculationSales: async({user, monthBalance, dailyBalance, date, role, goalUser}) => {
     const business = await businessService.getOneBusinessByUser(user);
     const goal = Number(business?.goal) || 0;
 
@@ -157,13 +157,17 @@ const movementService = {
       //Calculo de porcentaje de crecimiento de ventas del dia con respecto ayer
       salesGrowthPercentageDay = (salesIncreaseAmountDay / Math.abs(yesterdayBalance)) * 100;
 
-
     // % avance meta mensual (clamp 0-100)
     let salesCompletePercentageGoal = 0;
-
-    if (goal > 0)
-      //Calcular el porcentaje completado de ventas con respecto a la meta mensual
-      salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / goal))); 
+    if (role === userRoles.BUSINESS_OWNER) {
+      if (goal > 0) 
+        //Calcular el porcentaje completado de ventas con respecto a la meta mensual del negocio
+        salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / goal))); 
+    }else{
+      if (goalUser > 0)  
+        //Calcular el porcentaje completado de ventas con respecto a la meta mensual del usuario
+        salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / goalUser)));
+    }
     
     return {
       salesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
