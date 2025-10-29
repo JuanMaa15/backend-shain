@@ -66,7 +66,7 @@ const movementController = {
   },
 
   getMovementsByfilters: async(req, res, next) => {
-    console.log("Hola");
+
     const {type} = req.query;
     const entity = Object.values(req.params)[0];
     

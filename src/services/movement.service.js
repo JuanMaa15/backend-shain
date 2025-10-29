@@ -1,6 +1,6 @@
 import { movementTypes, userRoles } from "#config/constants.config.js";
 import Movement from "#models/movement.model.js";
-import { getDayRange, getLastDays, getMonthRange } from "#utils/dateTime.js";
+import { getDayRange, getLastDays, getMonthRange, normalizeUserDateToUTC } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
 import { format, subDays } from "date-fns";
 import businessService from "./business.service.js";
@@ -8,7 +8,14 @@ import userService from "./user.service.js";
 
 const movementService = {
 
-  createMovement: async(data) => await Movement.create(data),
+  createMovement: async(data) => {
+
+    const dateUTC = normalizeUserDateToUTC(data.date);
+
+    const formattedData = { ...data, date: dateUTC };
+
+    return await Movement.create(formattedData);
+  },
 
   updateMovement: async(id, data) => await Movement.findOneAndUpdate( 
     {_id: id},
@@ -52,7 +59,7 @@ const movementService = {
     //
     const movementsOnDay = await Promise.all(
       movementsDates.map(async date => {
-
+        
         //Rango de horas de la fecha
         const { start, end } = getDayRange( new Date(date) );
    
@@ -84,22 +91,24 @@ const movementService = {
 
   getSummaryAndStatistics: async({date, user, role, business, goalUser}) => {
 
+    const dateUTC = normalizeUserDateToUTC(date);
+
     //Traer total de ingresos y egresos
     const totalTransactions = await movementService.getTotalTransactionsByUser(user);
     //const totalBalance = totalTransactions.incomes;
 
     //Traer total ingresos y egresos del dia
-    const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: new Date(date), user});
+    const totalTransactionsDay = await movementService.getTotalTransactionsDay({date: dateUTC, user});
     const existMovements = totalTransactionsDay.incomes !== 0 || totalTransactionsDay.expenses !== 0;
     //calcular balance diario
-    const dailyBalance = totalTransactionsDay.incomes;
+    const dailyBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
    
     //Traer total ingresos y egresos del mes
     const totalTransactionsMonth = await movementService.getTotalTransactionsMonth(user);
     //calcular balance mensual
     const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
 
-    const calculationSales = await movementService.calculationSales({user, monthBalance, dailyBalance, date, role, goalUser});
+    const calculationSales = await movementService.calculationSales({user, monthBalance, dailyBalance, date: dateUTC, role, goalUser});
 
     //Si no hay movimientos y el balance diario es menor o igual a 0  no hubieron aumento de ventas
     if ( !existMovements ) { 
@@ -180,7 +189,7 @@ const movementService = {
     }
     
     const dataSales = {
-      alesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
+      salesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
       salesGrowthPercentageDay: salesGrowthPercentageDay === null ? 0 : (isFinite(salesGrowthPercentageDay) ? Math.round(salesGrowthPercentageDay) : 0),
       salesGrowthPercentageMonth: salesCompletePercentageGoal,
       ...dataGoals, 
