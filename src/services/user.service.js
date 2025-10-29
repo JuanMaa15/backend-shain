@@ -2,6 +2,7 @@ import { userStatus } from '#config/constants.config.js';
 import User from '#models/user.model.js';
 import { AppError } from '#utils/appError.js';
 import { differenceInDays } from 'date-fns';
+import movementService from './movement.service.js';
 
 const userService = {
 
@@ -67,6 +68,41 @@ const userService = {
   getUsersByBusiness: async(business) => 
     await User.find({business})
       .select('-password -__v'),
+
+  getUsersPercentageGoalUsersByBusiness: async(userOwnerId) => {
+
+    const userOwner = await User.findById(userOwnerId);
+
+    const employees = await User.find( { business: userOwner.business } ).lean();
+
+    let dataGoalsUsers = [];
+    if (employees.length > 0) {
+      dataGoalsUsers = await Promise.all(
+        employees.map( async employee => {
+          //Traer total ingresos y egresos del mes
+          const totalTransactionsMonth = await movementService.getTotalTransactionsMonth(employee._id);
+          //calcular balance mensual
+          const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
+
+          let salesCompletePercentageGoal = 0;
+          if (employee.goal > 0){
+            //Calcular el porcentaje completado de ventas con respecto a la meta mensual del negocio
+            salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / employee.goal))); 
+          }
+
+          return {
+            name: `${ employee.name } ${ employee.lastName }`,
+            monthBalance,
+            goal: employee.goal,
+            salesCompletePercentageGoal,
+          }
+
+        })
+      );
+    }
+
+    return dataGoalsUsers;
+  }
 
 }
 

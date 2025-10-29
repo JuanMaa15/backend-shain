@@ -4,6 +4,7 @@ import { getDayRange, getLastDays, getMonthRange } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
 import { format, subDays } from "date-fns";
 import businessService from "./business.service.js";
+import userService from "./user.service.js";
 
 const movementService = {
 
@@ -156,25 +157,36 @@ const movementService = {
     else
       //Calculo de porcentaje de crecimiento de ventas del dia con respecto ayer
       salesGrowthPercentageDay = (salesIncreaseAmountDay / Math.abs(yesterdayBalance)) * 100;
-
+    
     // % avance meta mensual (clamp 0-100)
     let salesCompletePercentageGoal = 0;
+    let dataGoals = {};
     if (role === userRoles.BUSINESS_OWNER) {
-      if (goal > 0) 
+      if (goal > 0){
         //Calcular el porcentaje completado de ventas con respecto a la meta mensual del negocio
         salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / goal))); 
+      }
+
+      const salesCompletePercentageGoalUsers = await userService.getUsersPercentageGoalUsersByBusiness(user);
+
+      dataGoals = { goal, salesCompletePercentageGoalUsers };
+      
     }else{
-      if (goalUser > 0)  
+      if (goalUser > 0) 
         //Calcular el porcentaje completado de ventas con respecto a la meta mensual del usuario
         salesCompletePercentageGoal = Math.round(Math.min(100, Math.max(0, (monthBalance * 100) / goalUser)));
+
+      dataGoals = { goal: goalUser };
     }
     
-    return {
-      salesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
+    const dataSales = {
+      alesIncreaseAmountDay: Math.round(salesIncreaseAmountDay),
       salesGrowthPercentageDay: salesGrowthPercentageDay === null ? 0 : (isFinite(salesGrowthPercentageDay) ? Math.round(salesGrowthPercentageDay) : 0),
       salesGrowthPercentageMonth: salesCompletePercentageGoal,
-      goal
+      ...dataGoals, 
     }
+
+    return dataSales
 
   },
 

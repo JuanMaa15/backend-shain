@@ -1,6 +1,7 @@
 import Booking from "#models/booking.model.js";
 import { AppError } from "#utils/appError.js";
 import { getDayRange, getMonthRange } from "#utils/dateTime.js";
+import { format } from "date-fns";
 
 const bookingService = {
 
@@ -32,9 +33,9 @@ const bookingService = {
 
     //Opciones para las diferentes consultas segun los filtros ingresados 
     const optionsQuery = {
-      day: () => { 
+      today: () => { 
         const { start, end } = getDayRange();
-        return { date: { $gte: start, $lte: end  } }
+        return { date: { $gte: start, $lte: end  } }  
       },
       month: () => {
         const { start, end } = getMonthRange();
@@ -42,8 +43,9 @@ const bookingService = {
       }, 
     }
     
-    if (filter && filter !== 'all'){
-      const query = optionsQuery[filter];
+    if (filter && filter !== 'all' && optionsQuery[filter]){
+      const query = optionsQuery[filter]();
+      console.log(query);
       bookings = await bookingService.getBookingsByDateAndUser(query.date, user);
     }else {
       bookings = await bookingService.getBookingsByUser(user);

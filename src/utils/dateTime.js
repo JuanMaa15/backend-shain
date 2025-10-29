@@ -4,8 +4,8 @@ const timeZone = 'America/Bogota'
 
 
 export const getDayRange = (date = new Date()) => ({
-  start: new Date(date.setHours(0, 0 ,0, 0)),
-  end: new Date(date.setHours(23, 59, 59, 999))
+  start: toDateAtMidnightUTC(date),
+  end: toDateAtBeforeMidnightUTC(date)
 });
 
 export const getMonthRange = (date = new Date()) => ({
@@ -30,6 +30,11 @@ export const getLastDays = ( daysNumber = 0 ) => {
 
 export const toDateAtMidnightUTC = (date) => {
   const dateStr = format(date, 'yyyy-MM-dd') + 'T00:00:00.000Z';
+  return new Date(dateStr)
+} 
+
+export const toDateAtBeforeMidnightUTC = (date) => {
+  const dateStr = format(date, 'yyyy-MM-dd') + 'T23:59:59.999Z';
   return new Date(dateStr)
 } 
 
