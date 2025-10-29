@@ -1,4 +1,4 @@
-import { endOfMonth, format, startOfDay, startOfMonth, subDays } from "date-fns";
+import { endOfMonth, endOfYear, format, startOfDay, startOfMonth, startOfYear, subDays } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
 
@@ -49,6 +49,28 @@ export const normalizeUserDateToUTC = (date, timeZone = 'America/Bogota') => {
     dateObj = new Date(`${date}T00:00:00`);
 
   return toZonedTime(dateObj, timeZone);
+}
+
+export const getLastsMonthsRange = (quantityMonths = 2) => {
+
+  const today = normalizeUserDateToUTC(new Date());
+
+  return {
+    start: startOfMonth(subMonths(today, quantityMonths)),
+    end:  endOfMonth(today)
+  }
+
+}
+
+export const getYearRange = (date = new Date()) => {
+
+  const dateUTC = normalizeUserDateToUTC(date);
+
+  return {
+    start: startOfYear(dateUTC),
+    end:  endOfYear(dateUTC)
+  }
+
 }
 
 /* export const dateLocal = (date = new Date()) => {

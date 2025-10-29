@@ -2,9 +2,10 @@ import { movementTypes, userRoles } from "#config/constants.config.js";
 import Movement from "#models/movement.model.js";
 import { getDayRange, getLastDays, getMonthRange, normalizeUserDateToUTC } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
-import { format, subDays } from "date-fns";
+import { format, isWithinInterval, subDays } from "date-fns";
 import businessService from "./business.service.js";
 import userService from "./user.service.js";
+import { queryByDate } from "#utils/query.js";
 
 const movementService = {
 
@@ -27,19 +28,45 @@ const movementService = {
 
   getOneMovement: async(id) => await Movement.findById(id),
 
-  getMovementsByFilters: async({type, user}) => {
-
+  getMovementsByFilters: async({type, user, business, filterDate}) => {
     let movements;
+    let query = {};
+    
+    if(type) query.type = type;
+    if(user) query.user = user;
+    if(business) query.business = business;
+    if (filterDate && filterDate !== 'all') query.date = queryByDate[filterDate]();
 
-    if (type && user)
-      movements = await Movement.find({type, user});
-    else if (user)
-      movements = await Movement.find({user});
+    if (user) {
+        movements = await Movement.find(query);
+        return movements.map( movement => ({
+          ...movement._doc,
+          date: movement.date.toISOString().slice(0, 10),
+        }) );
+    }
 
-    return movements.map( movement => ({
-      ...movement._doc,
-      date: movement.date.toISOString().slice(0, 10),
-    }) );
+    if(business) {   
+      movements = await movementService.getDailyMovementsByBusiness({type, business})
+
+      if(filterDate && filterDate !== 'all') {
+        const { $gte: startDate, $lte: endDate } = query.date;
+
+        let resultMovementsFilters = [];
+        movements.forEach( movement => {
+
+          const dateMovement = normalizeUserDateToUTC(movement.date);
+
+          const isInRange = isWithinInterval(dateMovement, { start: startDate, end: endDate });
+
+          if(isInRange) resultMovementsFilters.push(movement);
+
+        });
+
+        return resultMovementsFilters;
+      }
+
+    }
+
 
   },
 
