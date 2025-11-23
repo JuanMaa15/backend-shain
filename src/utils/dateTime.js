@@ -1,4 +1,4 @@
-import { endOfMonth, endOfYear, format, startOfDay, startOfMonth, startOfYear, subDays } from "date-fns";
+import { endOfMonth, endOfYear, format, startOfDay, startOfMonth, startOfYear, subDays, subMonths } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
 
@@ -43,10 +43,13 @@ export const toDateAtBeforeMidnightUTC = (date) => {
 //Convertir a la zona horaria local
 export const normalizeUserDateToUTC = (date, timeZone = 'America/Bogota') => {
   let dateObj = '';
-  if (date instanceof Date)
+  if (date instanceof Date){
     dateObj = date; 
-  else 
+    date.setHours(0, 0, 0, 0);
+  } else {
     dateObj = new Date(`${date}T00:00:00`);
+
+  }
 
   return toZonedTime(dateObj, timeZone);
 }

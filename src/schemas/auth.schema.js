@@ -13,7 +13,7 @@ const authSchema = {
     password: safePassword(),
     confirmPassword: safePassword(),
     phone: safeStringOptional(),
-    businessCode: safeStringOptional(),
+    businessCode: safeStringOptional().default(''),
   }).refine( (data) => {
     if (data.role === userRoles.SERVICE_PROVIDER && !data.businessCode){
       return false;

@@ -2,7 +2,7 @@ import { userStatus } from '#config/constants.config.js';
 import User from '#models/user.model.js';
 import { AppError } from '#utils/appError.js';
 import { differenceInDays } from 'date-fns';
-import movementService from './movement.service.js';
+import movementService from './movement/movement.service.js';
 
 const userService = {
 

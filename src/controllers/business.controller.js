@@ -25,11 +25,11 @@ const businessController = {
 
   getBusiness: async(req, res, next) => {
 
-    const {userId} = req.params;
+    const {id} = req.params;
 
     try {
 
-      const bussines = await businessService.getOneBusinessByUser(userId);
+      const bussines = await businessService.getOneBusiness(id);
 
       return res.status(200).json({
         status: 'sucess',

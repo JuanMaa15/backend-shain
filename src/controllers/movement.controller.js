@@ -1,4 +1,4 @@
-import movementService from "#services/movement.service.js";
+import movementService from "#services/movement/movement.service.js";
 
 const movementController = {
 
@@ -67,15 +67,15 @@ const movementController = {
 
   getMovementsByfilters: async(req, res, next) => {
 
-    const {type} = req.query;
+    const {type, filterDate} = req.query;
     const entity = Object.values(req.params)[0];
     
     try {
       let movements = {};
       if (req.params.userId ) {
-        movements = await movementService.getMovementsByFilters({type, user: entity});
+        movements = await movementService.getMovementsByFilters({type, user: entity, filterDate});
       }else if(req.params.businessId){
-        movements = await movementService.getMovementsByFilters({type, business: entity});
+        movements = await movementService.getMovementsByFilters({type, business: entity, filterDate});
       }
 
       return res.status(200).json({
@@ -112,10 +112,9 @@ const movementController = {
 
   getSummary: async(req, res, next) => {
 
-    const {date} = req.query;
     const user = req.params.userId;
     const {role, business, goal} = req.user;
-    
+    const date = new Date();
     try {
       
       const summary = await movementService.getSummaryAndStatistics({date, user, role, business, goalUser:goal});

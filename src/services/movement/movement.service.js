@@ -3,8 +3,8 @@ import Movement from "#models/movement.model.js";
 import { getDayRange, getLastDays, getMonthRange, normalizeUserDateToUTC } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
 import { format, isWithinInterval, subDays } from "date-fns";
-import businessService from "./business.service.js";
-import userService from "./user.service.js";
+import businessService from "../business.service.js";
+import userService from "../user.service.js";
 import { queryByDate } from "#utils/query.js";
 
 const movementService = {
@@ -30,7 +30,7 @@ const movementService = {
 
   getMovementsByFilters: async({type, user, business, filterDate}) => {
     let movements;
-    let query = {};
+    const query = {};
     
     if(type) query.type = type;
     if(user) query.user = user;
@@ -38,11 +38,11 @@ const movementService = {
     if (filterDate && filterDate !== 'all') query.date = queryByDate[filterDate]();
 
     if (user) {
-        movements = await Movement.find(query);
-        return movements.map( movement => ({
-          ...movement._doc,
-          date: movement.date.toISOString().slice(0, 10),
-        }) );
+      movements = await Movement.find(query);
+      return movements.map( movement => ({
+        ...movement._doc,
+        date: movement.date.toISOString().slice(0, 10),
+      }) );
     }
 
     if(business) {   
@@ -50,8 +50,8 @@ const movementService = {
 
       if(filterDate && filterDate !== 'all') {
         const { $gte: startDate, $lte: endDate } = query.date;
-
-        let resultMovementsFilters = [];
+        console.log(startDate, endDate);
+        const resultMovementsFilters = [];
         movements.forEach( movement => {
 
           const dateMovement = normalizeUserDateToUTC(movement.date);
@@ -64,6 +64,8 @@ const movementService = {
 
         return resultMovementsFilters;
       }
+
+      return movements;
 
     }
 
@@ -88,13 +90,14 @@ const movementService = {
       movementsDates.map(async date => {
         
         //Rango de horas de la fecha
-        const { start, end } = getDayRange( new Date(date) );
-   
+        const { start, end } = getDayRange( normalizeUserDateToUTC(date) );
+
         //Traer y agrupar los ingresos totales de la fecha 
         const result = await Movement.aggregate([
           {
             $match: {
-              date: { $gte: start, $lte: end }
+              date: { $gte: start, $lte: end },
+              type
             }
           },
           {
@@ -119,7 +122,7 @@ const movementService = {
   getSummaryAndStatistics: async({date, user, role, business, goalUser}) => {
 
     const dateUTC = normalizeUserDateToUTC(date);
-
+    console.log(dateUTC);
     //Traer total de ingresos y egresos
     const totalTransactions = await movementService.getTotalTransactionsByUser(user);
     //const totalBalance = totalTransactions.incomes;

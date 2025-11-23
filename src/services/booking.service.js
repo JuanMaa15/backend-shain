@@ -1,6 +1,6 @@
 import Booking from "#models/booking.model.js";
 import { AppError } from "#utils/appError.js";
-import { getDayRange, getMonthRange } from "#utils/dateTime.js";
+import { getDayRange, getMonthRange, normalizeUserDateToUTC } from "#utils/dateTime.js";
 import { format } from "date-fns";
 
 const bookingService = {
@@ -16,12 +16,14 @@ const bookingService = {
   createAndValidateBooking: async(data) => {
 
     const {date, timeSlot} = data;
+    const dateLocal = normalizeUserDateToUTC(date);
+    const formatData = {...data, date: dateLocal};
 
-    const booking = await bookingService.getBookingByDateAndTimeSlot( new Date(date), timeSlot );
+    const booking = await bookingService.getBookingByDateAndTimeSlot( dateLocal, timeSlot );
 
     if (booking) throw new AppError('error', 'Este turno ya fue reservado', 409);
 
-    const newBooking = await bookingService.createBooking(data);
+    const newBooking = await bookingService.createBooking(formatData);
 
     return newBooking;
   },
@@ -55,9 +57,9 @@ const bookingService = {
 
   },
 
-  getBookingsByUser: async(user) => await Booking.find({user}),
+  getBookingsByUser: async(user) => await Booking.find({user}).populate('timeSlot'),
 
-  getBookingsByDateAndUser: async(date, user) => await Booking.find({date, user}),
+  getBookingsByDateAndUser: async(date, user) => await Booking.find({date, user}).populate('timeSlot'),
 
   getBookingByDateAndTimeSlot: async(date, timeSlot) => await Booking.findOne({date, timeSlot}),
 

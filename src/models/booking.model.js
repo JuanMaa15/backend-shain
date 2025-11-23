@@ -1,11 +1,10 @@
-import { format } from "date-fns";
 import { Schema, get, model } from "mongoose";
 
 const bookingSchema = new Schema({
   date: {
     type: Date,
     required: true,
-    get: (val) => format(val, "yyyy-MM-dd")
+    get: (val) => val.toISOString().slice(0, 10)
   },
   timeSlot: {
     type: Schema.Types.ObjectId,
