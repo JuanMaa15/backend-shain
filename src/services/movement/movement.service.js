@@ -46,9 +46,10 @@ const movementService = {
     }
 
     if(business) {   
-      movements = await movementService.getDailyMovementsByBusiness({type, business})
+      movements = await movementService.getDailyMovementsByBusiness(query);
 
       if(filterDate && filterDate !== 'all') {
+        //Extraer el inicio y final de la consulta
         const { $gte: startDate, $lte: endDate } = query.date;
         console.log(startDate, endDate);
         const resultMovementsFilters = [];
@@ -56,6 +57,7 @@ const movementService = {
 
           const dateMovement = normalizeUserDateToUTC(movement.date);
 
+          //Validar si el movimiento se encuentra en el rango de fechas
           const isInRange = isWithinInterval(dateMovement, { start: startDate, end: endDate });
 
           if(isInRange) resultMovementsFilters.push(movement);
@@ -74,9 +76,16 @@ const movementService = {
 
   getMovementsByUser: async(user) => await Movement.find({user}),
 
-  getDailyMovementsByBusiness: async({ type, business }) => {
+  getDailyMovementsByBusiness: async(query) => {
 
-    const movements = await Movement.find({type, business});
+    //Reestructura la query para convetir las propiedades que son Id secundarios 
+    //convertirlo en Objecto ID
+    const parsedQuery = {
+      ...query,
+      ...(query.business && { business: toObjectId(query.business) })
+    };
+    console.log(parsedQuery);
+    const movements = await Movement.find(query);
 
     //Obtener y remover fechas duplicadas de los registros de los movimientos devolviuendo 
     //solo la fecha 
@@ -84,11 +93,10 @@ const movementService = {
       movements.map( item => [item.date.toISOString().slice(0, 10), item.date.toISOString().slice(0, 10) ] 
       ) 
     ).values()];
-
+    
     //
     const movementsOnDay = await Promise.all(
       movementsDates.map(async date => {
-        
         //Rango de horas de la fecha
         const { start, end } = getDayRange( normalizeUserDateToUTC(date) );
 
@@ -97,7 +105,7 @@ const movementService = {
           {
             $match: {
               date: { $gte: start, $lte: end },
-              type
+              ...parsedQuery
             }
           },
           {
