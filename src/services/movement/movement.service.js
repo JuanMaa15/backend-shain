@@ -37,6 +37,7 @@ const movementService = {
     if(business) query.business = business;
     if (filterDate && filterDate !== 'all') query.date = queryByDate[filterDate]();
 
+    //Usuario
     if (user) {
       movements = await Movement.find(query);
       return movements.map( movement => ({
@@ -45,13 +46,14 @@ const movementService = {
       }) );
     }
 
+    //Negocio
     if(business) {   
       movements = await movementService.getDailyMovementsByBusiness(query);
 
       if(filterDate && filterDate !== 'all') {
         //Extraer el inicio y final de la consulta
         const { $gte: startDate, $lte: endDate } = query.date;
-        console.log(startDate, endDate);
+
         const resultMovementsFilters = [];
         movements.forEach( movement => {
 
@@ -84,7 +86,7 @@ const movementService = {
       ...query,
       ...(query.business && { business: toObjectId(query.business) })
     };
-    console.log(parsedQuery);
+  
     const movements = await Movement.find(query);
 
     //Obtener y remover fechas duplicadas de los registros de los movimientos devolviuendo 
@@ -130,7 +132,7 @@ const movementService = {
   getSummaryAndStatistics: async({date, user, role, business, goalUser}) => {
 
     const dateUTC = normalizeUserDateToUTC(date);
-    console.log(dateUTC);
+    
     //Traer total de ingresos y egresos
     const totalTransactions = await movementService.getTotalTransactionsByUser(user);
     //const totalBalance = totalTransactions.incomes;
