@@ -1,4 +1,4 @@
-import movementService from "#services/movement/movement.service.js";
+import { movementService, movementSummaryService } from "#services/movement/index.js";
 
 const movementController = {
 
@@ -117,7 +117,7 @@ const movementController = {
     const date = new Date();
     try {
       
-      const summary = await movementService.getSummaryAndStatistics({date, user, role, business, goalUser:goal});
+      const summary = await movementSummaryService.getSummaryAndStatistics({date, user, role, business, goalUser:goal});
 
       return res.status(200).json({
         status: 'success',
@@ -126,6 +126,7 @@ const movementController = {
       });
 
     } catch (error) {
+      console.log(error);
       next(error);
     }
 

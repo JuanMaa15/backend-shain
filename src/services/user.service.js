@@ -2,7 +2,7 @@ import { userStatus } from '#config/constants.config.js';
 import User from '#models/user.model.js';
 import { AppError } from '#utils/appError.js';
 import { differenceInDays } from 'date-fns';
-import movementService from './movement/movement.service.js';
+import { movementAggregationService } from './movement/index.js';
 
 const userService = {
 
@@ -80,7 +80,7 @@ const userService = {
       dataGoalsUsers = await Promise.all(
         employees.map( async employee => {
           //Traer total ingresos y egresos del mes
-          const totalTransactionsMonth = await movementService.getTotalTransactionsMonth(employee._id);
+          const totalTransactionsMonth = await movementAggregationService.getTotalTransactionsMonth(employee._id);
           //calcular balance mensual
           const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
 
