@@ -4,18 +4,24 @@ import userService from "#services/user.service.js";
 import { normalizeUserDateToUTC } from "#utils/dateTime.js";
 import { subDays } from "date-fns";
 import movementAggregationService from "./movementAggregation.service.js";
+import movementService from "./movement.service.js";
 
 
 const movementSummaryService = {
   
-  getDayStatistics: async ({date, user}) => {
+  getDayStatistics: async ({date, user, business, role}) => {
 
     //Traer total de ingresos y egresos
     const totalTransactions = await movementAggregationService.getTotalTransactionsByUser(user);
     //const totalBalance = totalTransactions.incomes;
 
     //Traer total ingresos y egresos del dia
-    const totalTransactionsDay = await movementAggregationService.getTotalTransactionsDay({date, user});
+    //const totalTransactionsDay = await movementAggregationService.getTotalTransactionsDay({date, user});
+
+    const totalTransactionsDay = role === userRoles.BUSINESS_OWNER 
+      ? await movementAggregationService.getTotalTransactionsDayBusiness({date, business}) 
+      : await movementAggregationService.getTotalTransactionsDay({date, user});
+
     const existMovements = totalTransactionsDay.incomes !== 0 || totalTransactionsDay.expenses !== 0;
     //calcular balance diario
     const dailyBalance = totalTransactionsDay.incomes - totalTransactionsDay.expenses;
@@ -23,8 +29,10 @@ const movementSummaryService = {
     //traer la fecha de ayer
     const yesterdayDate = subDays(new Date(date), 1);
     //Traer los ingresos y egresos de ayer
-    const totalTransactionsYesterday = await movementAggregationService.getTotalTransactionsDay({date: yesterdayDate, user}); 
-  
+    const totalTransactionsYesterday = role === userRoles.BUSINESS_OWNER 
+      ? await movementAggregationService.getTotalTransactionsDayBusiness({date: yesterdayDate, business}) 
+      : await movementAggregationService.getTotalTransactionsDay({date: yesterdayDate, user}); 
+
     //Calcular el balance de ayer
     const yesterdayBalance = totalTransactionsYesterday.incomes - totalTransactionsYesterday.expenses;
   
@@ -40,7 +48,6 @@ const movementSummaryService = {
       salesGrowthPercentageDay = (salesIncreaseAmountDay / Math.abs(yesterdayBalance)) * 100;
 
     return {
-      totalTransactions,
       totalTransactionsDay,
       existMovements,
       dailyBalance,
@@ -50,17 +57,19 @@ const movementSummaryService = {
 
   },
 
-  getMonthStatistics: async({ user, role, goalUser }) => {
+  getMonthStatistics: async({ user, business, role, goalUser }) => {
 
-    const business = await businessService.getOneBusinessByUser(user);
-    const goal = Number(business?.goal) || 0;
+    const dataBusiness = await businessService.getOneBusiness(business);
+    const goal = Number(dataBusiness?.goal) || 0;
   
     // % avance meta mensual (clamp 0-100)
     let salesCompletePercentageGoal = 0;
     let dataGoals = {};
 
     //Traer total ingresos y egresos del mes
-    const totalTransactionsMonth = await movementAggregationService.getTotalTransactionsMonth(user);
+    const totalTransactionsMonth = role === userRoles.BUSINESS_OWNER 
+      ? await movementAggregationService.getTotalTransactionsMonthBusiness(business)
+      : await movementAggregationService.getTotalTransactionsMonth(user)
     //calcular balance mensual
     const monthBalance = totalTransactionsMonth.incomes - totalTransactionsMonth.expenses;
 
@@ -98,9 +107,9 @@ const movementSummaryService = {
     
     const totalTransactions = await movementAggregationService.getTotalTransactionsByUser(user);
 
-    const dayStatistics = await movementSummaryService.getDayStatistics({date: dateUTC, user});
+    const dayStatistics = await movementSummaryService.getDayStatistics({date: dateUTC, user, business, role});
     
-    const monthStatistics = await movementSummaryService.getMonthStatistics({ user, role, goalUser });
+    const monthStatistics = await movementSummaryService.getMonthStatistics({ user, business, role, goalUser });
 
     //Si no hay movimientos y el balance diario es menor o igual a 0  no hubieron aumento de ventas
     if ( !dayStatistics.existMovements ) { 

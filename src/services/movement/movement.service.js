@@ -1,8 +1,6 @@
 import { movementTypes } from "#config/constants.config.js";
 import Movement from "#models/movement.model.js";
 import { getLastDays, normalizeUserDateToUTC } from "#utils/dateTime.js";
-import { toObjectId } from "#utils/others.js";
-import { isWithinInterval } from "date-fns";
 import { queryByDate } from "#utils/query.js";
 import movementAggregationService from "./movementAggregation.service.js";
 
@@ -47,27 +45,8 @@ const movementService = {
 
     //Negocio
     if(business) {   
-      movements = await movementService.getDailyMovementsByBusiness(query);
 
-      if(filterDate && filterDate !== 'all') {
-        //Extraer el inicio y final de la consulta
-        const { $gte: startDate, $lte: endDate } = query.date;
-
-        const resultMovementsFilters = [];
-        movements.forEach( movement => {
-
-          const dateMovement = normalizeUserDateToUTC(movement.date);
-
-          //Validar si el movimiento se encuentra en el rango de fechas
-          const isInRange = isWithinInterval(dateMovement, { start: startDate, end: endDate });
-
-          if(isInRange) resultMovementsFilters.push(movement);
-
-        });
-
-        return resultMovementsFilters;
-      }
-
+      movements = await movementAggregationService.getDayMovementsFilters({query});
       return movements;
 
     }
@@ -77,7 +56,7 @@ const movementService = {
 
   getMovementsByUser: async(user) => await Movement.find({user}),
 
-  getDailyMovementsByBusiness: async(query) => {
+  /* getDailyMovementsByBusiness: async(query) => {
 
     //Reestructura la query para convetir las propiedades que son Id secundarios 
     //convertirlo en Objecto ID
@@ -110,7 +89,7 @@ const movementService = {
     
     //Ordenar por fechas y devolver
     return movementsOnDay.sort( (a, b) => new Date(a.date) - new Date(b.date) );
-  },
+  }, */
 
   
   getlastMovementsByDateAndUser: async({days, user}) => {
@@ -137,9 +116,20 @@ const movementService = {
     };
   },
 
-  
+  /*  getTotalTransactionsDayBusiness: async({date, business}) => {
 
-  
+    const { start, end } = getDayRange(date);
+
+    const query = { business: toObjectId(business), date: { $gte: start, $lte: end } };
+
+    const movements = await movementAggregationService.getDayMovementsFilters({query});
+    console.log("Movimientos total del dia");
+    console.log( movementSummaryService._formatTransactions(movements) );
+
+    return movementSummaryService._formatTransactions(movements);
+   
+
+  }, */
 
 }
 
