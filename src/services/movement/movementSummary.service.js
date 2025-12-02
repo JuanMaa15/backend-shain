@@ -100,6 +100,15 @@ const movementSummaryService = {
     }
 
   },
+
+  getYearStatistics: async({ user, business, role }) => {
+
+    const totalTransactionsYear = role === userRoles.BUSINESS_OWNER 
+      ? await movementAggregationService.getTotalTransactionsYearBusiness(business)
+      : await movementAggregationService.getTotalTransactionsYear(user);
+    
+    return { totalTransactionsYear };
+  },
   
   getSummaryAndStatistics: async({date, user, role, business, goalUser}) => {
 
@@ -111,6 +120,8 @@ const movementSummaryService = {
     
     const monthStatistics = await movementSummaryService.getMonthStatistics({ user, business, role, goalUser });
 
+    const yearStatistics = await movementSummaryService.getYearStatistics({ user, business, role });
+
     //Si no hay movimientos y el balance diario es menor o igual a 0  no hubieron aumento de ventas
     if ( !dayStatistics.existMovements ) { 
       dayStatistics.salesIncreaseAmountDay = 0;
@@ -120,13 +131,14 @@ const movementSummaryService = {
     const dataSummary = {
       dayStatistics,
       monthStatistics,
+      yearStatistics,
       totalIncomes: totalTransactions.incomes,
       totalExpenses: totalTransactions.expenses 
     }
 
     if (role === userRoles.BUSINESS_OWNER) {
 
-      const totalTransactionsBusiness = await movementAggregationService.getTotalTransactionsByBusiness(business);
+      const totalTransactionsBusiness = await movementAggregationService.getTotalTransactionsYearBusiness(business);
 
       //Margen de beneficio
       const profitMargin = totalTransactionsBusiness.incomes - totalTransactionsBusiness.expenses;

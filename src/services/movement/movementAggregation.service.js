@@ -1,5 +1,5 @@
 import Movement from "#models/movement.model.js";
-import { getMonthRange } from "#utils/dateTime.js";
+import { getMonthRange, getYearRange } from "#utils/dateTime.js";
 import { toObjectId } from "#utils/others.js";
 import movementSummaryService from "./movementSummary.service.js";
 
@@ -102,6 +102,52 @@ const movementAggregationService = {
   
     const { start, end } = getMonthRange();
       
+    const movements = await Movement.aggregate([
+      {
+        $match: {
+          business: toObjectId(business), 
+          date: {$gte: start, $lte: end}
+        }
+      },
+      {
+        $group: {
+          _id: "$type",
+          total: { $sum: '$value' }
+        }
+      }
+    ])
+
+    return movementSummaryService._formatTransactions(movements);
+  
+  },
+
+  getTotalTransactionsYear: async(user) => {
+
+    const { start, end } = getYearRange();
+      
+    const movements = await Movement.aggregate([
+      {
+        $match: {
+          user: toObjectId(user), 
+          date: {$gte: start, $lte: end}
+        }
+      },
+      {
+        $group: {
+          _id: "$type",
+          total: { $sum: '$value' }
+        }
+      }
+    ])
+
+    return movementSummaryService._formatTransactions(movements);
+  
+  },
+
+  getTotalTransactionsYearBusiness: async(business) => {
+
+    const { start, end } = getYearRange();
+    
     const movements = await Movement.aggregate([
       {
         $match: {
