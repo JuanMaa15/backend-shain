@@ -12,7 +12,7 @@ const movementController = {
 
     try {
       const newMovement = await movementService.createMovement(data);
-
+      console.log(newMovement);
       return res.status(201).json({
         status: 'success',
         message: 'Movimiento registrado correctamente.',
@@ -20,7 +20,7 @@ const movementController = {
           type: newMovement.type,
           description: newMovement.description,
           value: newMovement.value,
-          date: newMovement.date
+          date: newMovement.date.toISOString().slice(0, 10),
         }
       });
     } catch (error) {
@@ -112,7 +112,8 @@ const movementController = {
 
   getSummary: async(req, res, next) => {
 
-    const user = req.params.userId;
+    const user = req.params?.userId || req.user.id;
+    console.log(req.user.id);
     const {role, business, goal} = req.user;
     const date = new Date();
     try {

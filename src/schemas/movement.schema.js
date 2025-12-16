@@ -7,11 +7,11 @@ const movementSchema = {
   createAndUpdate: z.object({
     type: safeString(),
 
-    frecuencyType: safeStringOptional(),
+    frecuencyType: safeStringOptional().default(''),
 
     value: safeString(),
 
-    description: safeStringOptional(),
+    description: safeStringOptional().default(''),
 
     date: safeString()
   }).refine( (data) => {
