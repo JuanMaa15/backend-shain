@@ -5,6 +5,8 @@ const timeSlotService = {
 
   createTimeSlot: async(data) => await TimeSlot.create(data),
 
+  updateTimeSlot: async(id, data) => await TimeSlot.findByIdAndUpdate(id, data, {new: true}),
+
   getActivesHours: async() => await TimeSlot.find({isActive: true}),
 
   getAvailablesHours: async({date, user}) => {

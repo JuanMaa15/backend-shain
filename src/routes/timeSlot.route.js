@@ -9,5 +9,6 @@ const router = Router();
 
 router.get('/available', authorizeRole(userRoles.SERVICE_PROVIDER, userRoles.BUSINESS_OWNER), timeSlotController.getAvailablesHours);
 router.post('/', authorizeRole(userRoles.ADMIN), validateSchema(timeSlotSchema.create), timeSlotController.createTimeSlot);
+router.patch('/:id', authorizeRole(userRoles.ADMIN), validateSchema(timeSlotSchema.createUpdate), timeSlotController.updateTimeSlot);
 
 export default router;

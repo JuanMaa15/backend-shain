@@ -42,6 +42,27 @@ const timeSlotController = {
       next(error);
     }
 
+  },
+
+  updateTimeSlot: async() => {
+
+    const {id} = req.params;
+    const data = req.body;
+
+    try {
+      
+      const updatedTimeSlot = await timeSlotService.updateTimeSlot(id, data);
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: updatedTimeSlot
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
   }
 
 }

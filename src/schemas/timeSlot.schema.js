@@ -3,7 +3,7 @@ import { safeString } from './utils/stringValidator.js';
 
 const timeSlotSchema = {
 
-  create: z.object({
+  createUpdate: z.object({
     hour: safeString(),
   }),
 

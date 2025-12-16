@@ -7,8 +7,8 @@ const bookingSchema = {
 
     date: safeString(),
     timeSlot: safeString(),
-    customerName: safeString(),
-    description: safeText(),
+    customerName: safeString().default(""),
+    description: safeText().default(""),
     
   })
 
