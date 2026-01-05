@@ -1,4 +1,5 @@
 import TimeSlot from "#models/timeSlot.model.js";
+import { normalizeUserDateToUTC } from "#utils/dateTime.js";
 import bookingService from "./booking.service.js";
 
 const timeSlotService = {
@@ -11,12 +12,14 @@ const timeSlotService = {
 
   getAvailablesHours: async({date, user}) => {
 
-    const bookings = await bookingService.getBookingsByDateAndUser( new Date(date), user );
-
+    const dateFormat =  normalizeUserDateToUTC(date);
+    
+    const bookings = await bookingService.getBookingsByDateAndUser( dateFormat, user );
+    
     const activesHours = await timeSlotService.getActivesHours();
 
     // Creamos un Set con los IDs de las horas ya reservadas
-    const reservedSet = new Set( bookings.map(b => b.timeSlot.toString()) );
+    const reservedSet = new Set( bookings.map(b => b.timeSlot._id.toString()) );
 
     // Filtramos las horas activas que no están en el Set
     //const availablesHours = activesHours.filter( hour => !reservedSet.has(hour._id) );

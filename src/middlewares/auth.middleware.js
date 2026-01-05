@@ -67,7 +67,6 @@ export const authorizeAccess = ({model}) => async(req, res, next) => {
     });
     
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({
       status: 'error',
       code: 500,

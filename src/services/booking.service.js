@@ -46,7 +46,7 @@ const bookingService = {
     
     if (filter && filter !== 'all' && optionsQuery[filter]){
       const query = optionsQuery[filter]();
-      console.log(query);
+
       bookings = await bookingService.getBookingsByDateAndUser(query.date, user);
     }else {
       bookings = await bookingService.getBookingsByUser(user);
