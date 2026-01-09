@@ -28,11 +28,11 @@ const userController = {
 
   updateUserStatus: async(req, res, next) => {
 
-    const {status} = req.query;
-    const user = req.user.id;
+    const {status} = req.body;
+    const user = req.params.id;
 
     try {
-      
+
       const updateUser = await userService.updateUser(user, {status});
 
       return res.status(200).json({

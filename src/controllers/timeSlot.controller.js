@@ -3,6 +3,24 @@ import timeSlotService from "#services/timeSlot.service.js";
 
 const timeSlotController = {
 
+  getTimeSlots: async(req, res, next) => {
+
+    try {
+      
+      const timeSlots = await timeSlotService.getActivesHours();
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: timeSlots
+      })
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
   getAvailablesHours: async(req, res, next) => {
 
     const {date} = req.query;
@@ -44,7 +62,7 @@ const timeSlotController = {
 
   },
 
-  updateTimeSlot: async() => {
+  updateTimeSlot: async(req, res, next) => {
 
     const {id} = req.params;
     const data = req.body;
