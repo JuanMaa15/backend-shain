@@ -143,6 +143,30 @@ const authController = {
       next(error);
     }
 
+  },
+
+  updatePassword: async(req, res, next) => {
+
+    const { id } = req.user;
+    const data = req.body;
+
+    try {
+      
+      const user = await authService.changePassword(id, data);
+
+      return res.status(200).json({
+        status: 'sucesss',
+        code: 200,
+        data: {
+          id: user._id,
+          username: user.username
+        }
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
   }
 
 

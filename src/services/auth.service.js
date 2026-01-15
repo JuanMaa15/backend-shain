@@ -115,13 +115,34 @@ const authService = {
 
   },
 
+  changePassword: async(id, data) => {
+
+    const { password, confirmPassword } = data;
+
+    if (password !== confirmPassword) {
+      throw new AppError('error', 'Las contraseñas no coinciden.', 400);
+    }
+    
+    const user = await userService.getOneUser(id, true);
+
+    const isEquals = await authService.comparePassword(data.currentPassword, user.password);
+
+    if (!isEquals) {
+      throw new AppError('error', 'La contraseña actual es incorrecta.', 400);
+    }
+
+    const hashedPassword = await authService.hashedPassword(password);
+
+    const updatedUser = await userService.updateUser(id, { password: hashedPassword } );
+
+    return updatedUser;
+  },
+
   hashedPassword: async(password) => await bcrypt.hash(password, parseInt(SALT_ROUNDS, 10)),
 
   comparePassword: async(password, hashPassword) => await bcrypt.compare(password, hashPassword),
 
    
-  
-  
 }
 
 export default authService;
