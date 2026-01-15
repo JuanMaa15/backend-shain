@@ -51,9 +51,15 @@ const userService = {
 
   getAllUsers: async() => await User.find().select('-password'),
 
-  getOneUser: async(id) => {
+  getOneUser: async(id, withCompleteInfo = false) => {
 
-    const user = await User.findById(id, { password: 0 })
+    let user = {};
+
+    if (!withCompleteInfo) {
+      user = await User.findById(id, { password: 0 });
+    }else{
+      user = await User.findById(id);
+    }
 
     if (!user) throw new AppError('error', 'El usuario no existe en el sistema', 404);
 

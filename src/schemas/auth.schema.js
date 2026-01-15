@@ -39,6 +39,12 @@ const authSchema = {
     confirmPassword: safePassword()
   }),
 
+  changePassword: z.object({
+    currentPassword: safePassword(),
+    password: safePassword(),
+    confirmPassword: safePassword()
+  }),
+
 }
 
 export default authSchema;
