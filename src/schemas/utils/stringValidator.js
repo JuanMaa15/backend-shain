@@ -25,7 +25,7 @@ export const safeStringOptional = () =>
     required_error: 'Este campo es obligatorio *'
   }).regex(/^[^'"]*$/, {
     error: 'No se permiten comillas'
-  }).max(100, {
+  }).max(1000, {
     error: "Máx. 100 caracteres"
   }).transform((s) =>
     s ? 
