@@ -33,7 +33,8 @@ const authController = {
           username: user.username,
           status: user.status,
           role: user.role,
-          business: user.business
+          business: user.business._id,
+          businessImage: user.business.image
         }
       });
 

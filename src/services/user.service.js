@@ -69,7 +69,7 @@ const userService = {
 
   getUserByEmail: async(email) => await User.findOne({email}),
 
-  getUserByUsername: async(username) => await User.findOne({username}),
+  getUserByUsername: async(username) => await User.findOne({username}).populate('business', 'image'),
 
   getUsersByBusiness: async(business) => 
     await User.find({business})
