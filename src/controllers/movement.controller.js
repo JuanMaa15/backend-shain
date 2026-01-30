@@ -67,13 +67,12 @@ const movementController = {
 
   getMovementsByfilters: async(req, res, next) => {
 
-    const {type, filterDate} = req.query;
+    const {type, filterDate, from, to} = req.query;
     const entity = Object.values(req.params)[0];
-    
     try {
       let movements = {};
       if (req.params.userId ) {
-        movements = await movementService.getMovementsByFilters({type, user: entity, filterDate});
+        movements = await movementService.getMovementsByFilters({type, user: entity, filterDate, to, from});
       }else if(req.params.businessId){
         movements = await movementService.getMovementsByFilters({type, business: entity, filterDate});
       }

@@ -1,4 +1,4 @@
-import { getLastDays, getLastsMonthsRange, getMonthRange, getYearRange } from "./dateTime.js"
+import { getLastDays, getLastsMonthsRange, getMonthRange, getYearRange, normalizeUserDateToUTC } from "./dateTime.js"
 
 export const queryByDate = {
   sevenDays: () => {
@@ -17,5 +17,12 @@ export const queryByDate = {
     const { start, end } = getYearRange();
     return { $gte: start, $lte: end  };
   },
+  other: (from = new Date(), to = new Date()) => {
 
+    const startLocal = normalizeUserDateToUTC(from);
+    const endLocal = normalizeUserDateToUTC(to);
+
+    return { $gte: startLocal, $lte: endLocal  };
+
+  }
 }

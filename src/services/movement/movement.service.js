@@ -25,22 +25,44 @@ const movementService = {
 
   getOneMovement: async(id) => await Movement.findById(id),
 
-  getMovementsByFilters: async({type, user, business, filterDate}) => {
+  getMovementsByFilters: async({type, user, business, filterDate, from, to}) => {
     let movements;
     const query = {};
-    
     if(type) query.type = type;
     if(user) query.user = user;
     if(business) query.business = business;
     if (filterDate && filterDate !== 'all') query.date = queryByDate[filterDate]();
+    
+    if (from || to) query.date = queryByDate['other'](from, to);
 
     //Usuario
     if (user) {
       movements = await Movement.find(query);
-      return movements.map( movement => ({
+
+      const formattedMovoments = movements.map( movement => ({
         ...movement._doc,
         date: movement.date.toISOString().slice(0, 10),
       }) );
+
+      let totalIncomes = 0;
+      let totalExpenses = 0;
+      if (type && type === movementTypes.INCOME) {
+        totalIncomes = formattedMovoments.reduce( (acc, val) => acc +  val.value, 0 );
+      }
+
+      if (type && type === movementTypes.EXPENSE) {
+        totalExpenses = formattedMovoments.reduce( (acc, val) => acc +  val.value, 0 );
+      }
+
+      if (!type) {
+        totalExpenses = formattedMovoments.reduce( (acc, val) =>  val.type === movementTypes.EXPENSE ? acc + val.value : acc + 0, 0 );
+        totalIncomes = formattedMovoments.reduce( (acc, val) =>  val.type === movementTypes.INCOME ? acc +  val.value : acc + 0, 0 );
+      }
+
+      return { movements: formattedMovoments, ...(totalExpenses && { totalExpenses }),
+        ...(totalIncomes && { totalIncomes }),
+      }
+
     }
 
     //Negocio
