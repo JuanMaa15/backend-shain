@@ -10,7 +10,7 @@ const userService = {
 
     const daysPassed = differenceInDays(dateNow, dateCreate);
 
-    if ( daysPassed > 14) {
+    if ( daysPassed > 30) {
       await userService.updateUser(userId, {status: userStatus.INACTIVE});
       return true;
     } 
