@@ -49,6 +49,30 @@ const bookingController = {
 
   }, 
 
+  updateBooking: async(req, res, next) => {
+
+    const { id } = req.params;
+    const { customerName, description } = req.body;
+
+    try {
+
+      const updated = await bookingService.updateBooking(id, { customerName, description });
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: {
+          customerName: updated.customerName,
+          description: updated.description
+        }
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
   deleteBooking: async(req, res, next) => {
 
     const { id } = req.params;

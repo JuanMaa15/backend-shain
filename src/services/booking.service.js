@@ -18,7 +18,7 @@ const bookingService = {
     const dateLocal = normalizeUserDateToUTC(date);
     const formatData = {...data, date: dateLocal};
 
-    const booking = await bookingService.getBookingByDateAndTimeSlot( dateLocal, timeSlot );
+    const booking = await bookingService.getBookingByDateAndTimeSlot( dateLocal, timeSlot);
 
     if (booking) throw new AppError('error', 'Este turno ya fue reservado', 409);
 
@@ -60,7 +60,13 @@ const bookingService = {
 
   getBookingsByDateAndUser: async(date, user) => await Booking.find({date, user}).populate('timeSlot'),
 
-  getBookingByDateAndTimeSlot: async(date, timeSlot) => await Booking.findOne({date, timeSlot}),
+  getBookingByDateAndTimeSlot: async(date, timeSlot, userId) => await Booking.findOne({date, timeSlot, user: userId}),
+
+  updateBooking: async(id, data) => {
+    const updated = await Booking.findByIdAndUpdate(id, data, { new: true });
+    if (!updated) throw new AppError('error', 'Reserva no encontrada', 404);
+    return updated;
+  },
 
   deleteBooking: async(id) => await Booking.findByIdAndDelete(id)
 

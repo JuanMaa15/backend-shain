@@ -9,7 +9,14 @@ const bookingSchema = {
     timeSlot: safeString(),
     customerName: safeString().default(""),
     description: safeText().default(""),
-    
+
+  }),
+
+  update: z.object({
+
+    customerName: safeString().optional(),
+    description: safeText().optional(),
+
   })
 
 }
