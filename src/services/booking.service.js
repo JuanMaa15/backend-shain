@@ -14,11 +14,11 @@ const bookingService = {
 
   createAndValidateBooking: async(data) => {
 
-    const {date, timeSlot} = data;
+    const {date, timeSlot, user} = data;
     const dateLocal = normalizeUserDateToUTC(date);
     const formatData = {...data, date: dateLocal};
 
-    const booking = await bookingService.getBookingByDateAndTimeSlot( dateLocal, timeSlot);
+    const booking = await bookingService.getBookingByDateAndTimeSlot( dateLocal, timeSlot, user );
 
     if (booking) throw new AppError('error', 'Este turno ya fue reservado', 409);
 
