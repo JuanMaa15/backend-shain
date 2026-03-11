@@ -34,7 +34,8 @@ const authController = {
           status: user.status,
           role: user.role,
           business: user.business?._id ?? null,
-          businessImage: user.business?.image ?? null
+          businessImage: user.business?.image ?? null,
+          goal: user?.goal ?? 0
         }
       });
 

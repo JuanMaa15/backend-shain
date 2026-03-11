@@ -94,6 +94,7 @@ const userController = {
           name: updateUser.name,
           username: updateUser.username,
           email: updateUser.email,
+          goaL: updateUser.goal ?? 0,
         } 
       }); 
     } catch (error) {
