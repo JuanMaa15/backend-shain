@@ -2,10 +2,10 @@ import z from 'zod';
 import sanitizeHtml from 'sanitize-html';
 
 
-export const safeString = () => 
+export const safeString = () =>
   z.string({
     required_error: 'Este campo es obligatorio *'
-  }).nonempty({
+  }).trim().nonempty({
     error: 'El campo no puede estar vacío'
   }).regex(/^[^'"]*$/, {
     error: 'No se permiten comillas'
@@ -20,10 +20,10 @@ export const safeString = () =>
       : undefined              
   );
 
-export const safeStringOptional = () => 
+export const safeStringOptional = () =>
   z.string({
     required_error: 'Este campo es obligatorio *'
-  }).regex(/^[^'"]*$/, {
+  }).trim().regex(/^[^'"]*$/, {
     error: 'No se permiten comillas'
   }).max(1000, {
     error: "Máx. 100 caracteres"
