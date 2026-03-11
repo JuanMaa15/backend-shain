@@ -6,7 +6,7 @@ const businessSchema = {
   updateBusiness: z.object({
     //name: safeString(),
     goal: safeStringOptional(),
-    type: safeStringOptional()
+    description: safeStringOptional()
   })
 
 }
