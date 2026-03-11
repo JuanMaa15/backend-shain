@@ -21,6 +21,11 @@ const bookingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  status: {
+    type: String,
+    enum: ['pendiente', 'en proceso', 'terminado'],
+    default: 'pendiente'
   }
 },
 {

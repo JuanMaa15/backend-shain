@@ -8,6 +8,7 @@ const router = Router();
 router.post('/', validateSchema(bookingSchema.create), bookingController.createBooking);
 router.get('/', bookingController.getBookingsByFilters);
 router.patch('/:id', validateSchema(bookingSchema.update), bookingController.updateBooking);
+router.patch('/:id/status', validateSchema(bookingSchema.updateStatus), bookingController.updateBookingStatus);
 router.delete('/:id', bookingController.deleteBooking);
 
 export default router;

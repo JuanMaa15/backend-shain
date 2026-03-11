@@ -73,6 +73,29 @@ const bookingController = {
 
   },
 
+  updateBookingStatus: async(req, res, next) => {
+
+    const { id } = req.params;
+    const { status } = req.body;
+
+    try {
+
+      const updated = await bookingService.updateBooking(id, { status });
+
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        data: {
+          status: updated.status
+        }
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+  },
+
   deleteBooking: async(req, res, next) => {
 
     const { id } = req.params;

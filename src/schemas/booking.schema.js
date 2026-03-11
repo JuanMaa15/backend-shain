@@ -17,6 +17,12 @@ const bookingSchema = {
     customerName: safeString().optional(),
     description: safeText().optional(),
 
+  }),
+
+  updateStatus: z.object({
+
+    status: z.enum(['pendiente', 'en proceso', 'terminado']),
+
   })
 
 }
